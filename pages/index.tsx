@@ -1,118 +1,234 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import Image from "next/image";
+// import { Inter } from 'next/font/google'
+import Link from "next/link";
 
-const inter = Inter({ subsets: ['latin'] })
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  flexRender,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useMemo } from "react";
+
+// const inter = Inter({ subsets: ['latin'] })
+
+const API_URL = "https://api.coingecko.com/api/v3";
+
+const tokens = ["bitcoin", "ethereum"];
+
+type Token = {
+  // id: string;
+  name: string; // e.g. Bitcoin, Ethereum etc
+  imageUrl: string;
+  ticker: string; // e.g. BTC, ETH etc
+  price: number;
+  trendHourly: number; // trends are expressed in percentages and can be negative
+  trendDaily: number;
+  trendWeekly: number;
+  totalVolume: number;
+  marketCap: number;
+  chartWeekly: string; // temp, should be object
+};
+
+const apiData: Token[] = [
+  {
+    // id: "1",
+    name: "Bitcoin",
+    imageUrl:
+      "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579",
+    ticker: "BTC",
+    price: 18836.5,
+    trendHourly: 0.3,
+    trendDaily: -5.5,
+    trendWeekly: -4.9,
+    totalVolume: 37487827262,
+    marketCap: 360647792952,
+    chartWeekly: "",
+  },
+  {
+    // id: "2",
+    name: "Ethereum",
+    imageUrl:
+      "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880",
+    ticker: "ETH",
+    price: 1520.79,
+    trendHourly: 0.3,
+    trendDaily: -8.3,
+    trendWeekly: -0.3,
+    totalVolume: 19400566194,
+    marketCap: 183158649788,
+    chartWeekly: "",
+  },
+];
 
 export default function Home() {
-  return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
+  const data = useMemo(() => apiData, []);
+
+  // Utility fn for creating column definitions
+  const columnHelper = createColumnHelper<Token>();
+
+  // color utility
+  const getTrendColor = (trend: number) =>
+    trend < 0 ? "text-red-500" : "text-green-500";
+
+  // Column definitions
+  const defaultColumns = [
+    // Display Column
+    columnHelper.display({
+      id: "actions",
+      cell: () => <button>x</button>, // cell: (props) => <RowActions row={props.row} />,
+    }),
+    // Accessor Columns
+    columnHelper.accessor("ticker", {
+      // we don't want to display the ticker as a separate column but we need
+      // to include it here or we can't use it in the "name" column below.
+      // There should be a better way but this works right now.
+      id: undefined,
+      header: undefined,
+      cell: () => null,
+    }),
+    columnHelper.accessor("imageUrl", {
+      // same remarks as for "ticker" above
+      id: undefined,
+      header: undefined,
+      cell: () => null,
+    }),
+    columnHelper.accessor("name", {
+      id: "name",
+      cell: (props) => (
+        <div className="flex items-center">
+          <div className="mx-1">
             <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+              width="25"
+              height="25"
+              src={props.row.getValue("imageUrl")}
+              alt=""
             />
-          </a>
+          </div>
+          <span className="mx-1 font-bold">{props.row.getValue("name")} </span>
+          <span className="text-gray-500">{props.row.getValue("ticker")}</span>
         </div>
-      </div>
+      ),
+    }),
+    columnHelper.accessor("price", {
+      header: "Price",
+      cell: (props) => <div>${props.row.getValue("price")}</div>,
+    }),
+    columnHelper.accessor("trendHourly", {
+      header: "1h",
+      cell: (props) => {
+        const val: number = props.row.getValue("trendHourly");
+        const twColor = getTrendColor(val);
+        return <div className={`${twColor} `}>{val}%</div>;
+      },
+    }),
+    columnHelper.accessor("trendDaily", {
+      header: "24h",
+      cell: (props) => {
+        const val: number  = props.row.getValue("trendDaily");
+        const twColor = getTrendColor(val);
+        return <div className={`${twColor} `}>{val}%</div>;
+      },
+    }),
+    columnHelper.accessor("trendWeekly", {
+      header: "7d",
+      cell: (props) => {
+        const val: number  = props.row.getValue("trendWeekly");
+        const twColor = getTrendColor(val);
+        return <div className={`${twColor} `}>{val}%</div>;
+      },
+    }),
+    columnHelper.accessor("totalVolume", {
+      header: "Total Volume",
+      cell: (props) => <>${props.row.getValue("totalVolume")}</>,
+    }),
+    columnHelper.accessor("marketCap", {
+      header: "Mkt Cap",
+      cell: (props) => <>${props.row.getValue("marketCap")}</>,
+    }),
+    columnHelper.accessor("chartWeekly", { header: "Last 7 Days" }),
+  ];
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+  const reactTable = useReactTable({
+    data: data, // should be memoized
+    columns: defaultColumns,
+    getCoreRowModel: getCoreRowModel(),
+    debugAll: true,
+  });
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+  // const columns = useMemo(() => defaultColumns, [defaultColumns]); // defs need to be outside
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+  return (
+    <main>
+      <header>
+        <nav>
+          <Link href="/archive">Archive</Link>
+        </nav>
+      </header>
+      <form>
+        <label>
+          Token ID
+          <input
+            type="text"
+            className="mx-2 border-2 border-black rounded-lg"
+          />
+        </label>
+        <button type="submit">ADD</button>
+      </form>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div className="p-2 mt-4">
+        <table className="border-collapse w-full font-bold leading-10">
+          {" "}
+          {/* table-fixed  */}
+          <thead>
+            {reactTable.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="border-t border-gray-400">
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {reactTable.getRowModel().rows.map((row) => (
+              <tr key={row.id} className="border-t border-gray-400">
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+          {/* <tfoot>
+            {reactTable.getFooterGroups().map((footerGroup) => (
+              <tr key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <th key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.footer,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </tfoot> */}
+        </table>
+        <div className="h-4" />
+        {/* <button onClick={() => rerender()} className="border p-2">
+        Rerender
+      </button> */}
       </div>
     </main>
-  )
+  );
 }
