@@ -1,6 +1,7 @@
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
 
 const WeekChart: React.FC<{ data: ApiDataPoint[] }> = ({ data }) => {
+
   const prepareChartData = (data: ApiDataPoint[]): ChartDataPoint[] => {
     const initialValue = data[0];
     const xMin = initialValue[0];
@@ -19,27 +20,28 @@ const WeekChart: React.FC<{ data: ApiDataPoint[] }> = ({ data }) => {
   };
 
   const chartData = prepareChartData(data);
+  const delta = chartData[chartData.length - 1].value - chartData[0].value;
+  const graphColor = delta >= 0 ? "#20F020" : "#F02020";
 
   return (
-    <ResponsiveContainer width={"100%"} height="100%" debounce={1}>
+    <ResponsiveContainer width="100%" height="100%" debounce={1}>
       <LineChart data={chartData}>
         <XAxis
           xAxisId={0}
           type="number"
           dataKey="xAxisValue"
-          domain={[0, 24 * 3600 * 7 + 1]}
+          domain={[0, 24 * 3600 * 7 * 1000]}
           hide={true}
         />
         <YAxis
           yAxisId={0}
-          // domain={chartData.domain}
           hide={true}
         />
 
         <Line
           type="monotone"
           dataKey="value"
-          stroke={"#F02020"}
+          stroke={graphColor}
           dot={false}
           isAnimationActive={false}
         />

@@ -15,10 +15,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - provide CryptoGecko link (powered by CryptoGecko)
 - add market cap value to token object
 - add garbage icon in frontend
+- fix "hidden" columns => check react-table docs (https://tanstack.com/table/v8/docs/api/core/table)
 
 # Ideas
 - connect kairon.erland.info to frontend on Vercel: https://kairon-client.vercel.app/ ? https ?
-- show whether API is online or  not
+- show whether API is online or not
 - 
 
 # Done
