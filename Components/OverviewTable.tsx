@@ -22,7 +22,7 @@ const OverviewTable: React.FC<{data: Token[]}> = ({data}) => {
     // Display Column
     columnHelper.display({
       id: "actions",
-      cell: () => <button className="border-2 border-red-600 rounded-md leading-none p-3">x</button>, // cell: (props) => <RowActions row={props.row} />,
+      cell: () => <button className="border-2 border-red-600 rounded-md leading-none p-3">x</button>, 
     }),
     // Accessor Columns
     columnHelper.accessor("symbol", {
