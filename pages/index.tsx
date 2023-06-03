@@ -10,54 +10,61 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 
+import bitcoinData from "@/data/bitcoin";
+import ethereumData from "@/data/ethereum";
+import WeekChart from "@/Components/WeekChart";
+
 // const inter = Inter({ subsets: ['latin'] })
 
 const API_URL = "https://api.coingecko.com/api/v3";
 
 const tokens = ["bitcoin", "ethereum"];
 
-type Token = {
-  // id: string;
+interface Token {
+  id: string; // e.g. bitcoin, ethereum etc
+  marketCapRank: number;
+  symbol: string; // e.g. btc, eth etc
   name: string; // e.g. Bitcoin, Ethereum etc
-  imageUrl: string;
-  ticker: string; // e.g. BTC, ETH etc
-  price: number;
+  image: string;
+  currentPrice: number;
   trendHourly: number; // trends are expressed in percentages and can be negative
   trendDaily: number;
   trendWeekly: number;
   totalVolume: number;
   marketCap: number;
-  chartWeekly: string; // temp, should be object
-};
+  chartData: ApiDataPoint[];
+}
 
 const apiData: Token[] = [
   {
-    // id: "1",
+    id: "bitcoin",
+    marketCapRank: 1,
+    symbol: "btc",
     name: "Bitcoin",
-    imageUrl:
+    image:
       "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579",
-    ticker: "BTC",
-    price: 18836.5,
+    currentPrice: 18836.5,
     trendHourly: 0.3,
     trendDaily: -5.5,
     trendWeekly: -4.9,
     totalVolume: 37487827262,
     marketCap: 360647792952,
-    chartWeekly: "",
+    chartData: bitcoinData.prices as ApiDataPoint[],
   },
   {
-    // id: "2",
+    id: "ethereum",
+    marketCapRank: 2,
+    symbol: "eth",
     name: "Ethereum",
-    imageUrl:
+    image:
       "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880",
-    ticker: "ETH",
-    price: 1520.79,
+    currentPrice: 1520.79,
     trendHourly: 0.3,
     trendDaily: -8.3,
     trendWeekly: -0.3,
     totalVolume: 19400566194,
     marketCap: 183158649788,
-    chartWeekly: "",
+    chartData: ethereumData.prices as ApiDataPoint[],
   },
 ];
 
@@ -79,7 +86,7 @@ export default function Home() {
       cell: () => <button>x</button>, // cell: (props) => <RowActions row={props.row} />,
     }),
     // Accessor Columns
-    columnHelper.accessor("ticker", {
+    columnHelper.accessor("symbol", {
       // we don't want to display the ticker as a separate column but we need
       // to include it here or we can't use it in the "name" column below.
       // There should be a better way but this works right now.
@@ -87,7 +94,7 @@ export default function Home() {
       header: undefined,
       cell: () => null,
     }),
-    columnHelper.accessor("imageUrl", {
+    columnHelper.accessor("image", {
       // same remarks as for "ticker" above
       id: undefined,
       header: undefined,
@@ -95,24 +102,30 @@ export default function Home() {
     }),
     columnHelper.accessor("name", {
       id: "name",
+      header: () => <div className="w-full text-left">Coin</div>,
       cell: (props) => (
         <div className="flex items-center">
           <div className="mx-1">
             <Image
               width="25"
               height="25"
-              src={props.row.getValue("imageUrl")}
+              src={props.row.getValue("image")}
               alt=""
             />
           </div>
           <span className="mx-1 font-bold">{props.row.getValue("name")} </span>
-          <span className="text-gray-500">{props.row.getValue("ticker")}</span>
+          <span className="uppercase text-gray-500">
+            {props.row.getValue("symbol")}
+          </span>
         </div>
       ),
     }),
-    columnHelper.accessor("price", {
+    columnHelper.accessor("currentPrice", {
       header: "Price",
-      cell: (props) => <div>${props.row.getValue("price")}</div>,
+      cell: (props) => {
+        const val: number = props.row.getValue("currentPrice");
+        return <div>${val.toLocaleString("en-US")}</div>;
+      },
     }),
     columnHelper.accessor("trendHourly", {
       header: "1h",
@@ -125,7 +138,7 @@ export default function Home() {
     columnHelper.accessor("trendDaily", {
       header: "24h",
       cell: (props) => {
-        const val: number  = props.row.getValue("trendDaily");
+        const val: number = props.row.getValue("trendDaily");
         const twColor = getTrendColor(val);
         return <div className={`${twColor} `}>{val}%</div>;
       },
@@ -133,20 +146,35 @@ export default function Home() {
     columnHelper.accessor("trendWeekly", {
       header: "7d",
       cell: (props) => {
-        const val: number  = props.row.getValue("trendWeekly");
+        const val: number = props.row.getValue("trendWeekly");
         const twColor = getTrendColor(val);
         return <div className={`${twColor} `}>{val}%</div>;
       },
     }),
     columnHelper.accessor("totalVolume", {
       header: "Total Volume",
-      cell: (props) => <>${props.row.getValue("totalVolume")}</>,
+      cell: (props) => {
+        const val: number = props.row.getValue("totalVolume");
+        return <>${val.toLocaleString("en-US")}</>;
+      },
     }),
     columnHelper.accessor("marketCap", {
       header: "Mkt Cap",
-      cell: (props) => <>${props.row.getValue("marketCap")}</>,
+      cell: (props) => {
+        const val: number = props.row.getValue("marketCap");
+        return <>${val.toLocaleString("en-US")}</>;
+      },
     }),
-    columnHelper.accessor("chartWeekly", { header: "Last 7 Days" }),
+    columnHelper.accessor("chartData", {
+      header: "Last 7 Days",
+      cell: (props) => {
+        return (
+          <div className="ml-auto w-[160px] h-[56px]">
+            <WeekChart data={props.row.getValue("chartData")} />
+          </div>
+        );
+      },
+    }),
   ];
 
   const reactTable = useReactTable({
@@ -177,7 +205,7 @@ export default function Home() {
       </form>
 
       <div className="p-2 mt-4">
-        <table className="border-collapse w-full font-bold leading-10">
+        <table className="border-collapse w-full font-bold leading-10 text-right">
           {" "}
           {/* table-fixed  */}
           <thead>
@@ -207,27 +235,8 @@ export default function Home() {
               </tr>
             ))}
           </tbody>
-          {/* <tfoot>
-            {reactTable.getFooterGroups().map((footerGroup) => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </tfoot> */}
         </table>
         <div className="h-4" />
-        {/* <button onClick={() => rerender()} className="border p-2">
-        Rerender
-      </button> */}
       </div>
     </main>
   );

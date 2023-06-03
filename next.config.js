@@ -9,9 +9,6 @@ const nextConfig = {
         port: "",
         pathname: "/coins/images/**"
       }
-      
-      // coins/images/279/large/ethereum.png?1595348880
-
     ],
   },
 }
