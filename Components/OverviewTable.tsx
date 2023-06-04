@@ -74,24 +74,33 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
       header: "1h",
       cell: (props) => {
         const val: number = props.row.getValue("trendHourly");
-        const twColor = getTrendColor(val);
-        return <div className={`${twColor} `}>{val}%</div>;
+        if (val) {
+          const twColor = getTrendColor(val);
+          return <div className={`${twColor} `}>{val}%</div>;
+        }
+        return <div>N/A</div>;
       },
     }),
     columnHelper.accessor("trendDaily", {
       header: "24h",
       cell: (props) => {
         const val: number = props.row.getValue("trendDaily");
-        const twColor = getTrendColor(val);
-        return <div className={`${twColor} `}>{val}%</div>;
+        if (val) {
+          const twColor = getTrendColor(val);
+          return <div className={`${twColor} `}>{val}%</div>;
+        }
+        return <div>N/A</div>;
       },
     }),
     columnHelper.accessor("trendWeekly", {
       header: "7d",
       cell: (props) => {
         const val: number = props.row.getValue("trendWeekly");
-        const twColor = getTrendColor(val);
-        return <div className={`${twColor} `}>{val}%</div>;
+        if (val) {
+          const twColor = getTrendColor(val);
+          return <div className={`${twColor} `}>{val}%</div>;
+        }
+        return <div>N/A</div>;
       },
     }),
     columnHelper.accessor("totalVolume", {
