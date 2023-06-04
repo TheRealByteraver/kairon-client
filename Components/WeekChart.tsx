@@ -1,13 +1,13 @@
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
 
-const WeekChart: React.FC<{ data: ApiDataPoint[] }> = ({ data }) => {
-  const prepareChartData = (data: ApiDataPoint[]): ChartDataPoint[] => {
+const WeekChart: React.FC<{ data: CoinGeckoApiDataPoint[] }> = ({ data }) => {
+  const prepareChartData = (data: CoinGeckoApiDataPoint[]): ChartDataPoint[] => {
     const initialValue = data[0];
     const xMin = initialValue[0];
 
     // find the lowest value (the lowest price) in the dataset
     const yMin = data.reduce(
-      (prev: ApiDataPoint, cur: ApiDataPoint) =>
+      (prev: CoinGeckoApiDataPoint, cur: CoinGeckoApiDataPoint) =>
         prev[1] < cur[1] ? prev : cur,
       initialValue
     )[1];

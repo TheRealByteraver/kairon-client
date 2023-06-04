@@ -11,5 +11,5 @@ interface Token {
   trendWeekly: number | undefined;
   totalVolume: number;
   marketCap: number;
-  chartData: ApiDataPoint[] | undefined;
+  chartData: CoinGeckoApiDataPoint[] | undefined;
 }

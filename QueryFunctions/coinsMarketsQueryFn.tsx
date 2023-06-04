@@ -1,8 +1,8 @@
-import { API_URL } from "./globals";
+import { COINGECKO_API_URL } from "./globals";
 
-const coinsMarketsQueryFn = (tokens: string[]): Promise<ApiToken[]> =>
+const coinsMarketsQueryFn = (tokens: string[]): Promise<CoinGeckoApiToken[]> =>
       fetch(
-        `${API_URL}/coins/markets?vs_currency=usd&ids=${tokens.join()}&precision=2&order=market_cap_desc`
+        `${COINGECKO_API_URL}/coins/markets?vs_currency=usd&ids=${tokens.join()}&precision=2&order=market_cap_desc`
       )
         .then((response) => response.json())
         .then((body) => {

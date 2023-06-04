@@ -15,7 +15,7 @@ const apiData: Token[] = [
     trendWeekly: -4.9,
     totalVolume: 37487827262,
     marketCap: 360647792952,
-    chartData: bitcoinData.prices as ApiDataPoint[],
+    chartData: bitcoinData.prices as CoinGeckoApiDataPoint[],
   },
   {
     id: "ethereum",
@@ -30,7 +30,7 @@ const apiData: Token[] = [
     trendWeekly: -0.3,
     totalVolume: 19400566194,
     marketCap: 183158649788,
-    chartData: ethereumData.prices as ApiDataPoint[],
+    chartData: ethereumData.prices as CoinGeckoApiDataPoint[],
   },
 ];
 

@@ -1,12 +1,12 @@
-import { API_URL } from "./globals";
+import { COINGECKO_API_URL } from "./globals";
 
 const coinsIdMarketChartRangeQueryFn = async (
   token: string,
   domain: [number, number]
-): Promise<ApiChartData> => {
+): Promise<CoinGeckoApiChartData> => {
   // console.log('fetching', token, 'with delay of', API_FETCH_DELAY * (index + 1));
   return fetch(
-    `${API_URL}/coins/${token}/market_chart/range?vs_currency=usd&from=${domain[0]}&to=${domain[1]}`
+    `${COINGECKO_API_URL}/coins/${token}/market_chart/range?vs_currency=usd&from=${domain[0]}&to=${domain[1]}`
   )
     .then((response) => response.json())
     .then((body) => {

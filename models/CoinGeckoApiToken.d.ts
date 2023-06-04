@@ -1,4 +1,4 @@
-interface ApiToken {
+interface CoinGeckoApiToken {
     id: string;
     symbol: string;
     name: string;

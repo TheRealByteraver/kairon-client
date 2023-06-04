@@ -1,8 +1,52 @@
+import { TOKEN_API_URL } from "@/QueryFunctions/globals";
+
 import Link from "next/link";
 
 import ApiContainer from "@/Components/ApiContainer";
+import { useQuery } from "@tanstack/react-query";
 
 const HomePage: React.FC<{}> = ({}) => {
+  const tokensQuery = useQuery({
+    // cacheTime: 300 * 1000,
+    // refetchInterval: 30 * 1000,
+    // staleTime: 300 * 1000,
+    // "queryKey" is always an array and should be unique across all queries
+    queryKey: ["GET /token"],
+    // force error with: queryFn: () => Promise.reject("The error message here")
+    queryFn: () => {
+      return (
+        fetch(`${TOKEN_API_URL}/token`)
+          // .then((response) => response.text())
+          .then((response) => response.json())
+          .then((body) => {
+            console.log("own api response: ", body);
+            return body;
+          })
+          .then((response) => {
+            if (response.error !== undefined) {
+              console.log("response.error:", response.error);
+              throw new Error(response.error);
+            }
+            return response;
+          })
+          .catch((error) => {
+            throw new Error(error);
+          })
+      );
+    },
+  });
+
+  const getTokens = () => {
+    if (!(tokensQuery.isLoading || tokensQuery.isError)) {
+      return tokensQuery.data
+        .filter((token: OwnApiToken) => token.active)
+        .map((token: OwnApiToken) => token.id);
+    }
+    return undefined;
+  };
+
+  const tokens = getTokens();
+
   return (
     <main>
       <header>
@@ -22,7 +66,13 @@ const HomePage: React.FC<{}> = ({}) => {
       </form>
 
       <div className="p-2 mt-4">
-        <ApiContainer />
+        {tokensQuery.isLoading && <p>Retrieving saved tokens...</p>}
+        {tokensQuery.isError && (
+          <p>{`An error occured retrieving saved tokens: ${JSON.stringify(
+            tokensQuery.error
+          )}`}</p>
+        )}
+        {tokens && <ApiContainer tokens={getTokens()} />}
       </div>
     </main>
   );
