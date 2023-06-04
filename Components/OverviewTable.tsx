@@ -10,6 +10,7 @@ import {
 import WeekChart from "@/Components/WeekChart";
 
 const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
+
   // Utility fn for creating column definitions
   const columnHelper = createColumnHelper<Token>();
 
@@ -74,7 +75,7 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
       header: "1h",
       cell: (props) => {
         const val: number = props.row.getValue("trendHourly");
-        if (val) {
+        if (val !== undefined) {
           const twColor = getTrendColor(val);
           return <div className={`${twColor} `}>{val}%</div>;
         }
@@ -85,7 +86,7 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
       header: "24h",
       cell: (props) => {
         const val: number = props.row.getValue("trendDaily");
-        if (val) {
+        if (val !== undefined) {
           const twColor = getTrendColor(val);
           return <div className={`${twColor} `}>{val}%</div>;
         }
@@ -96,7 +97,7 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
       header: "7d",
       cell: (props) => {
         const val: number = props.row.getValue("trendWeekly");
-        if (val) {
+        if (val !== undefined) {
           const twColor = getTrendColor(val);
           return <div className={`${twColor} `}>{val}%</div>;
         }
@@ -135,6 +136,10 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
     getCoreRowModel: getCoreRowModel(),
     // debugAll: true,
   });
+
+  if(!data) {
+    return <div>Loading...</div>
+  }
 
   return (
     <table className="border-collapse w-full font-bold leading-10 text-right">
