@@ -11,6 +11,11 @@ cd kairon-client
 npm install
 ```
 
+Create a `.env.local` file in the root of the "kairon-client" folder and give it the following contents:
+```
+NEXT_PUBLIC_TOKEN_API_URL=http://localhost:5000
+```
+
 Run the _build_ script to compile the code, then serve the build locally:
 
 ```bash

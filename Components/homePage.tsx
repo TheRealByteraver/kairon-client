@@ -1,4 +1,4 @@
-import { TOKEN_API_URL } from "@/QueryFunctions/globals";
+// import { TOKEN_API_URL } from "@/QueryFunctions/globals";
 
 import Link from "next/link";
 
@@ -8,20 +8,20 @@ import { useQuery } from "@tanstack/react-query";
 const HomePage: React.FC<{}> = ({}) => {
   const tokensQuery = useQuery({
     // cacheTime: 300 * 1000,
-    // refetchInterval: 30 * 1000,
+    refetchInterval: 1 * 1000, // for easy debugging
     // staleTime: 300 * 1000,
     // "queryKey" is always an array and should be unique across all queries
     queryKey: ["GET /token"],
     // force error with: queryFn: () => Promise.reject("The error message here")
     queryFn: () => {
       return (
-        fetch(`${TOKEN_API_URL}/token`)
+        fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`)
           // .then((response) => response.text())
           .then((response) => response.json())
-          .then((body) => {
-            console.log("own api response: ", body);
-            return body;
-          })
+          // .then((body) => {
+          //   console.log("own api response: ", body);
+          //   return body;
+          // })
           .then((response) => {
             if (response.error !== undefined) {
               console.log("response.error:", response.error);
