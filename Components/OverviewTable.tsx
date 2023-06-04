@@ -24,8 +24,8 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
     columnHelper.display({
       id: "actions",
       cell: () => (
-        <button className="border-2 border-red-600 rounded-md leading-none p-3">
-          x
+        <button className="border-2 border-red-500 text-red-500 rounded-md leading-none py-1 px-2">
+          X
         </button>
       ),
     }),
@@ -43,6 +43,10 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
       id: undefined,
       header: undefined,
       cell: () => null,
+    }),
+    columnHelper.accessor("marketCapRank", {
+      header: () => <div className="w-full text-center">#</div>,
+      cell: (props) => <div className="mr-4">{props.row.getValue("marketCapRank")}</div>,
     }),
     columnHelper.accessor("name", {
       id: "name",

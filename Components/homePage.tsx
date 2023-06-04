@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import OverviewTable from "@/Components/OverviewTable";
 import ApiContainer from "@/Components/ApiContainer";
 
 const HomePage: React.FC<{}> = ({}) => {

@@ -1,4 +1,4 @@
 type ChartDataPoint = {
   xAxisValue: number;
-  value: number;
+  yAxisValue: number;
 };

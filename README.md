@@ -2,6 +2,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Instructions
 
+### Install the client
+
 Download the repository and the dependencies to your machine:
 ```bash
 git clone https://github.com/TheRealByteraver/kairon-client.git
@@ -9,19 +11,55 @@ cd kairon-client
 npm install
 ```
 
-Run the development server:
+Run the _build_ script to compile the code, then serve the build locally:
 
 ```bash
-git clone 
-npm run dev
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Install the server
+
+Now, go up a directory and download the Python api server repository. You might need to install [pipenv](https://pypi.org/project/pipenv/) first:
+
+```bash
+cd ..
+git clone https://github.com/TheRealByteraver/kairon-server.git
+cd kairon-server
+pipenv shell
+pip install -r requirements.txt
+```
+
+We also need to start Python and create the sqlite database - we need to do this only once:
+```bash
+python
+```
+
+The cursor now changes to the Python prompt. Now, enter the following commands to create the database:
+```bash
+from app import app
+from app import db
+db.create_all()
+exit()
+```
+
+We're almost done. Now, start the server with the command:
+
+```bash
+python app.py
+```
+
+### Running the app
+
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000) to check if the api is up and ready.
+
+Finally,
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the client.
 
 
 # Todo
 - provide CryptoGecko attribution ("powered by CryptoGecko")
-- add market cap value to token object
 - add garbage icon in frontend
 
 # Issues
@@ -37,4 +75,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 # Done
 - add comma's to display of large numbers in table
-
+- add market cap value to token object

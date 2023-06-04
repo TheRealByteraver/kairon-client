@@ -1,4 +1,4 @@
-import { tokens, API_FETCH_DELAY } from "@/QueryFunctions/globals";
+import { tokens } from "@/QueryFunctions/globals";
 
 import wait from "@/QueryFunctions/wait";
 import coinsMarketsQueryFn from "@/QueryFunctions/coinsMarketsQueryFn";
@@ -12,10 +12,12 @@ import { useQuery } from "@tanstack/react-query";
 // https://www.youtube.com/watch?v=Nm0inP3B_zs&list=PLC3y8-rFHvwjTELCrPrcZlo6blLBUspd2&index=2&ab_channel=Codevolution
 
 import OverviewTable from "./OverviewTable";
-import { useState } from "react";
 
 const ApiContainer: React.FC<{}> = () => {
-  const tokenData = useState([]);
+
+  // a delay of 10s is too short. 10-30 calls per minute my ass ;)
+  const API_FETCH_DELAY = 12 * 1000;
+
 
   const coinsMarketsQuery = useQuery({
     cacheTime: 300 * 1000,
