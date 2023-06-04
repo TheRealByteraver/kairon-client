@@ -11,15 +11,20 @@ const API_URL = "https://api.coingecko.com/api/v3";
 const tokens = ["bitcoin", "ethereum", "tether"];
 
 // resource: https://medium.com/doctolib/react-query-cachetime-vs-staletime-ec74defc483e
-const refetchInterval = 120000; // 30000; // in ms
-const staleTime = 120000; // make sure not to perform another request for two minutes after the first successful one
+
+// refetch every 30 seconds
+// const refetchInterval = 30000; 
+// make sure not to perform another request for "staleTime" ms after the 
+// first successful one
+// const staleTime = 30000; 
 
 const HomePage: React.FC<{}> = ({}) => {
   // const data = useMemo(() => apiData, []); // mock data, memoized
 
   const coinsMarketsQuery = useQuery({
-    refetchInterval,
-    staleTime,
+    cacheTime: 300 * 1000, 
+    // refetchInterval: 30 * 1000,
+    staleTime: 25 * 1000,
     queryKey: ["/coins/markets"], // this is always an array and should be unique
     // force error with: queryFn: () => Promise.reject("The error message here")
     queryFn: (): Promise<ApiToken[]> =>
@@ -44,8 +49,9 @@ const HomePage: React.FC<{}> = ({}) => {
   });
 
   const coinsIdMarketChartRangeQuery = useQuery({
-    refetchInterval,
-    staleTime,
+    cacheTime: 300 * 1000, 
+    // refetchInterval: 45 * 1000,
+    staleTime: 55 * 1000,
     queryKey: ["/coins/{id}/market_chart/range"], // this is always an array and should be unique
     // force error with: queryFn: () => Promise.reject("The error message here")
     queryFn: (): Promise<ApiChartData[]> => {
@@ -95,31 +101,38 @@ const HomePage: React.FC<{}> = ({}) => {
   const getData = (): Token[] | null => {
     const apiTokens = getApiTokens();
     const apiChartsData = getApiChartsData();
-    if (typeof apiTokens === 'string' || typeof apiChartsData === 'string') return null; // TODO (quick hack)
+    if (typeof apiTokens === 'string') return null; // TODO (quick hack)
+
     return tokens.map((token, index) => {
       const apiToken = apiTokens[index];
-      const apiChartData = apiChartsData[index].prices;
 
-      const lastChartIndex = apiChartData.length - 1;
-      const lastValue = apiChartData[lastChartIndex][1];
+      let trendHourly = undefined, trendDaily = undefined, trendWeekly = undefined;
+      let apiChartData = undefined;
 
+      if (typeof apiChartsData !== 'string') {
+        apiChartData = apiChartsData[index].prices;
 
-      // get timeDelta (the interval between two data points) expressed in seconds
-      const timeDelta = (apiChartData[lastChartIndex][0] - apiChartData[lastChartIndex - 1][0]) / 1000;
-      // check how many indices we need to go back to fetch the datapoint of an hour ago
-      const hourIndexInterval = Math.round(3600 / timeDelta); // should be "1"
-
-      const hourAgoValue = apiChartData[lastChartIndex - hourIndexInterval][1];
-      const dayAgoValue = apiChartData[lastChartIndex - hourIndexInterval * 24][1];
-      const weekAgoValue = apiChartData[0][1];
-      const hourDelta = lastValue - hourAgoValue;
-      const dayDelta = lastValue - dayAgoValue;
-      const weekDelta = lastValue - weekAgoValue;
-
-      // calculate percentages
-      const trendHourly = Math.round(hourDelta * 1000 / hourAgoValue) / 10;
-      const trendDaily = Math.round(dayDelta * 1000 / dayAgoValue) / 10;
-      const trendWeekly = Math.round(weekDelta * 1000 / weekAgoValue) / 10;
+        const lastChartIndex = apiChartData.length - 1;
+        const lastValue = apiChartData[lastChartIndex][1];
+  
+  
+        // get timeDelta (the interval between two data points) expressed in seconds
+        const timeDelta = (apiChartData[lastChartIndex][0] - apiChartData[lastChartIndex - 1][0]) / 1000;
+        // check how many indices we need to go back to fetch the datapoint of an hour ago
+        const hourIndexInterval = Math.round(3600 / timeDelta); // should be "1"
+  
+        const hourAgoValue = apiChartData[lastChartIndex - hourIndexInterval][1];
+        const dayAgoValue = apiChartData[lastChartIndex - hourIndexInterval * 24][1];
+        const weekAgoValue = apiChartData[0][1];
+        const hourDelta = lastValue - hourAgoValue;
+        const dayDelta = lastValue - dayAgoValue;
+        const weekDelta = lastValue - weekAgoValue;
+  
+        // calculate percentages
+        trendHourly = Math.round(hourDelta * 1000 / hourAgoValue) / 10;
+        trendDaily = Math.round(dayDelta * 1000 / dayAgoValue) / 10;
+        trendWeekly = Math.round(weekDelta * 1000 / weekAgoValue) / 10;
+      }
 
       return {
         id: apiToken.id, // e.g. bitcoin, ethereum etc
@@ -139,8 +152,6 @@ const HomePage: React.FC<{}> = ({}) => {
   }
 
   const data = getData();
-  
-  // return <>{JSON.stringify({ data: getData()})}</>
 
   return (
     <main>
@@ -161,6 +172,7 @@ const HomePage: React.FC<{}> = ({}) => {
       </form>
 
       <div className="p-2 mt-4">
+        {!data && <span>loading data...</span>}
         {data && <OverviewTable data={data} />}        
       </div>
     </main>

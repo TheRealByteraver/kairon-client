@@ -5,11 +5,11 @@ interface Token {
   name: string; // e.g. Bitcoin, Ethereum etc
   image: string;
   currentPrice: number;
-  trendHourly: number; // trends are expressed in percentages and can be negative
-  trendDaily: number;
-  trendWeekly: number;
+  // trends are expressed in percentages
+  trendHourly: number | undefined; 
+  trendDaily: number | undefined;
+  trendWeekly: number | undefined;
   totalVolume: number;
   marketCap: number;
-  chartData: ApiDataPoint[];
+  chartData: ApiDataPoint[] | undefined;
 }
-

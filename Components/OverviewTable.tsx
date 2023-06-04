@@ -9,7 +9,7 @@ import {
 
 import WeekChart from "@/Components/WeekChart";
 
-const OverviewTable: React.FC<{data: Token[]}> = ({data}) => {
+const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
   // Utility fn for creating column definitions
   const columnHelper = createColumnHelper<Token>();
 
@@ -22,7 +22,11 @@ const OverviewTable: React.FC<{data: Token[]}> = ({data}) => {
     // Display Column
     columnHelper.display({
       id: "actions",
-      cell: () => <button className="border-2 border-red-600 rounded-md leading-none p-3">x</button>, 
+      cell: () => (
+        <button className="border-2 border-red-600 rounded-md leading-none p-3">
+          x
+        </button>
+      ),
     }),
     // Accessor Columns
     columnHelper.accessor("symbol", {
@@ -34,7 +38,7 @@ const OverviewTable: React.FC<{data: Token[]}> = ({data}) => {
       cell: () => null,
     }),
     columnHelper.accessor("image", {
-      // same remarks as for "ticker" above
+      // same remarks as for "symbol" above
       id: undefined,
       header: undefined,
       cell: () => null,
@@ -52,7 +56,7 @@ const OverviewTable: React.FC<{data: Token[]}> = ({data}) => {
               alt=""
             />
           </div>
-          <span className="mx-1 font-bold">{props.row.getValue("name")} </span>
+          <span className="mx-1 font-bold">{props.row.getValue("name")}</span>
           <span className="uppercase text-gray-500">
             {props.row.getValue("symbol")}
           </span>
@@ -125,38 +129,35 @@ const OverviewTable: React.FC<{data: Token[]}> = ({data}) => {
 
   return (
     <table className="border-collapse w-full font-bold leading-10 text-right">
-    {" "}
-    {/* table-fixed  */}
-    <thead>
-      {reactTable.getHeaderGroups().map((headerGroup) => (
-        <tr key={headerGroup.id} className="border-t border-gray-400">
-          {headerGroup.headers.map((header) => (
-            <th key={header.id} className="">
-              {header.isPlaceholder
-                ? null
-                : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-            </th>
-          ))}
-        </tr>
-      ))}
-    </thead>
-    <tbody>
-      {reactTable.getRowModel().rows.map((row) => (
-        <tr key={row.id} className="border-t border-gray-400">
-          {row.getVisibleCells().map((cell) => (
-            <td key={cell.id}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-
+      <thead>
+        {reactTable.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id} className="border-t border-gray-400">
+            {headerGroup.headers.map((header) => (
+              <th key={header.id} className="">
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {reactTable.getRowModel().rows.map((row) => (
+          <tr key={row.id} className="border-t border-gray-400">
+            {row.getVisibleCells().map((cell) => (
+              <td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
-}
+};
 
 export default OverviewTable;

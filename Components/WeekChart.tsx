@@ -19,13 +19,18 @@ const WeekChart: React.FC<{ data: ApiDataPoint[] }> = ({ data }) => {
     }));
   };
 
-  const chartData = prepareChartData(data);
-  const delta = chartData[chartData.length - 1].value - chartData[0].value;
-  const graphColor = delta >= 0 ? "#20F020" : "#F02020";
+  if (!data) {
+    return null;
+    // return <div>loading...</div>;
+  }
+
+  // const chartData = prepareChartData(data);
+  // const delta = chartData[chartData.length - 1].value - chartData[0].value;
+  // const graphColor = delta >= 0 ? "#20F020" : "#F02020";
 
   return (
     <ResponsiveContainer width="100%" height="100%" debounce={1}>
-      <LineChart data={chartData}>
+      <LineChart data={prepareChartData(data)}>
         <XAxis
           xAxisId={0}
           type="number"
@@ -41,7 +46,8 @@ const WeekChart: React.FC<{ data: ApiDataPoint[] }> = ({ data }) => {
         <Line
           type="monotone"
           dataKey="value"
-          stroke={graphColor}
+          // stroke={graphColor}
+          stroke="#F02020"
           dot={false}
           isAnimationActive={false}
         />
