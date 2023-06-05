@@ -1,1 +1,1 @@
-type OwnApiToken = { active: boolean; id: string };
+type OwnApiToken = { id: string; active: boolean };

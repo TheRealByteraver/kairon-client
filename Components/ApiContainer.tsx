@@ -4,8 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import OverviewTable from "./OverviewTable";
 
-const ApiContainer: React.FC<{ tokens: string[] }> = ({ tokens }) => {
-
+const ApiContainer: React.FC<{
+  tokens: string[];
+  removeToken: (token: string) => void;
+}> = ({ tokens, removeToken }) => {
   const coinsMarketsQuery = useQuery({
     // cacheTime: 300 * 1000,
     refetchInterval: 30 * 1000,
@@ -75,7 +77,12 @@ const ApiContainer: React.FC<{ tokens: string[] }> = ({ tokens }) => {
     return <div>Loading...</div>;
   }
 
-  return <OverviewTable data={data} />;
+  return (
+    <OverviewTable
+      data={data}
+      removeToken={removeToken}
+    />
+  );
   // return <OverviewTable tokenData={tokenData} trendData={trendData} />;
 };
 

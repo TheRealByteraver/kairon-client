@@ -1,4 +1,4 @@
-const tokensQueryFn = () => {
+const tokensQueryFn = (): Promise<OwnApiToken[]> | OwnApiToken[] => {
   // The below IF statement was added to debug the CSS issue with Vercel:
   // We want to see at least two tokens in the list.
   if (!process.env.NEXT_PUBLIC_TOKEN_API_URL) {
@@ -10,7 +10,6 @@ const tokensQueryFn = () => {
 
   return (
     fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`)
-      // .then((response) => response.text())
       .then((response) => response.json())
       // .then((body) => {
       //   console.log("own api response: ", body);
