@@ -1,5 +1,3 @@
-// import { tokens } from "@/QueryFunctions/globals";
-
 import wait from "@/QueryFunctions/wait";
 import coinsMarketsQueryFn from "@/QueryFunctions/coinsMarketsQueryFn";
 import coinsIdMarketChartRangeQueryFn from "@/QueryFunctions/coinsIdMarketChartRangeQueryFn";
@@ -13,8 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import OverviewTable from "./OverviewTable";
 
-const ApiContainer: React.FC<{tokens: string[]}> = ({tokens}) => {
-
+const ApiContainer: React.FC<{ tokens: string[] }> = ({ tokens }) => {
   // a delay of 10s is too short. 10-30 calls per minute my ass ;)
   const API_FETCH_DELAY = 19 * 1000;
 
@@ -30,7 +27,7 @@ const ApiContainer: React.FC<{tokens: string[]}> = ({tokens}) => {
 
   const coinsIdMarketChartRangeQuery = useQuery({
     // retry == number of retry attempts on error
-    retry: 5, 
+    retry: 5,
     retryDelay: (retryAttempt) => retryAttempt * 10 * 1000,
     cacheTime: 1200 * 1000,
     // refetchInterval: 45 * 1000,
@@ -82,29 +79,37 @@ const ApiContainer: React.FC<{tokens: string[]}> = ({tokens}) => {
         coinGeckoApiChartData = apiChartsData[index].prices;
 
         const lastChartIndex = coinGeckoApiChartData.length - 1;
-        const lastValue = coinGeckoApiChartData[lastChartIndex][1];
 
-        // get timeDelta (the interval between two data points) expressed in seconds
-        const timeDelta =
-          (coinGeckoApiChartData[lastChartIndex][0] -
-            coinGeckoApiChartData[lastChartIndex - 1][0]) /
-          1000;
-        // check how many indices we need to go back to fetch the datapoint of an hour ago
-        const hourIndexInterval = Math.round(3600 / timeDelta); // should be "1"
+        // the coin gecko api sometimes returns empty arrays (no history)
+        if (lastChartIndex <= 0) {
+          coinGeckoApiChartData = undefined;
+        } else {
+          const lastValue = coinGeckoApiChartData[lastChartIndex][1];
 
-        const hourAgoValue =
-          coinGeckoApiChartData[lastChartIndex - hourIndexInterval][1];
-        const dayAgoValue =
-          coinGeckoApiChartData[lastChartIndex - hourIndexInterval * 24][1];
-        const weekAgoValue = coinGeckoApiChartData[0][1];
-        const hourDelta = lastValue - hourAgoValue;
-        const dayDelta = lastValue - dayAgoValue;
-        const weekDelta = lastValue - weekAgoValue;
+          // get timeDelta (the interval between two data points) expressed in seconds
+          const timeDelta =
+            (coinGeckoApiChartData[lastChartIndex][0] -
+              coinGeckoApiChartData[lastChartIndex - 1][0]) /
+            1000;
+          // check how many indices we need to go back to fetch the datapoint of an hour ago
+          const hourIndexInterval = Math.round(3600 / timeDelta); // should be "1"
 
-        // calculate percentages
-        trendHourly = Math.round((hourDelta * 1000) / hourAgoValue) / 10;
-        trendDaily = Math.round((dayDelta * 1000) / dayAgoValue) / 10;
-        trendWeekly = Math.round((weekDelta * 1000) / weekAgoValue) / 10;
+          if (lastChartIndex >= hourIndexInterval * 24) {
+            const hourAgoValue =
+              coinGeckoApiChartData[lastChartIndex - hourIndexInterval][1];
+            const dayAgoValue =
+              coinGeckoApiChartData[lastChartIndex - hourIndexInterval * 24][1];
+            const weekAgoValue = coinGeckoApiChartData[0][1];
+            const hourDelta = lastValue - hourAgoValue;
+            const dayDelta = lastValue - dayAgoValue;
+            const weekDelta = lastValue - weekAgoValue;
+
+            // calculate percentages
+            trendHourly = Math.round((hourDelta * 1000) / hourAgoValue) / 10;
+            trendDaily = Math.round((dayDelta * 1000) / dayAgoValue) / 10;
+            trendWeekly = Math.round((weekDelta * 1000) / weekAgoValue) / 10;
+          }
+        }
       }
 
       return {
@@ -128,7 +133,7 @@ const ApiContainer: React.FC<{tokens: string[]}> = ({tokens}) => {
   if (!data) {
     return <div>Loading...</div>;
   }
-  
+
   return <OverviewTable data={data} />;
   // return <OverviewTable tokenData={tokenData} trendData={trendData} />;
 };

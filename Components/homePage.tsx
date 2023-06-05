@@ -1,9 +1,12 @@
 import Link from "next/link";
 
 import ApiContainer from "@/Components/ApiContainer";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import TokenForm from "./TokenForm";
+import tokensQueryFn from "@/QueryFunctions/tokensQueryFn";
 
 const HomePage: React.FC<{}> = ({}) => {
+  const queryClient = useQueryClient();
   const tokensQuery = useQuery({
     // cacheTime: 300 * 1000,
     refetchInterval: 1 * 1000, // for easy debugging
@@ -11,31 +14,36 @@ const HomePage: React.FC<{}> = ({}) => {
     // "queryKey" is always an array and should be unique across all queries
     queryKey: ["GET /token"],
     // force error with: queryFn: () => Promise.reject("The error message here")
-    queryFn: () => {
-      // The below IF statement was added to debug the CSS issue with Vercel
-      if (!process.env.NEXT_PUBLIC_TOKEN_API_URL) {        
-        return [{ id: "bitcoin", active: true }, { id: "ethereum", active: true }];
-      }
+    queryFn: tokensQueryFn,
+  });
 
-      return (
-        fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`)
-          // .then((response) => response.text())
-          .then((response) => response.json())
-          // .then((body) => {
-          //   console.log("own api response: ", body);
-          //   return body;
-          // })
-          .then((response) => {
-            if (response.error !== undefined) {
-              console.log("response.error:", response.error);
-              throw new Error(response.error);
-            }
-            return response;
-          })
-          .catch((error) => {
-            throw new Error(error);
-          })
-      );
+  const newTokenMutation = useMutation({
+    mutationFn: async (token: string) =>
+      fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: token }),
+      })
+        .then((response) => response.json())
+        .then((body) => {
+          console.log("own api response: ", body);
+          return body;
+        })
+        .then((response) => {
+          if (response.error !== undefined) {
+            console.log("response.error:", response.error);
+            throw new Error(response.error);
+          }
+          return response;
+        })
+        .catch((error) => {
+          throw new Error(error);
+        }),
+    // automatically update the list with posts "on the screen"
+    onSuccess: () => {
+      queryClient.invalidateQueries(["GET /token"]);
     },
   });
 
@@ -49,6 +57,7 @@ const HomePage: React.FC<{}> = ({}) => {
   };
 
   const tokens = getTokens();
+  console.log('tokens:', tokens);
 
   return (
     <main>
@@ -57,25 +66,22 @@ const HomePage: React.FC<{}> = ({}) => {
           <Link href="/archive">Archive</Link>
         </nav>
       </header>
-      <form>
-        <label>
-          Token ID
-          <input
-            type="text"
-            className="mx-2 border-2 border-black rounded-lg"
-          />
-        </label>
-        <button type="submit">ADD</button>
-      </form>
+      <hr className="mb-4" />
+
+      <TokenForm
+        addToken={
+          (token: string) => newTokenMutation.mutate(token)
+      }
+      />
 
       <div className="p-2 mt-4">
-        {tokensQuery.isLoading && <p>Retrieving saved tokens...</p>}
+        {tokensQuery.isLoading && <p>retrieving saved tokens...</p>}
         {tokensQuery.isError && (
           <p>{`An error occured retrieving saved tokens: ${JSON.stringify(
             tokensQuery.error
           )}`}</p>
         )}
-        {tokens && <ApiContainer tokens={getTokens()} />}
+        {tokens && <ApiContainer tokens={tokens} />}
       </div>
     </main>
   );

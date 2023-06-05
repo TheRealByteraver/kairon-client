@@ -68,6 +68,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Todo
 - provide CryptoGecko attribution ("powered by CryptoGecko")
 - add garbage icon in frontend
+- test what happens if CoinGecko APi gets request for non existent token => unknown tokens are silently ignored
+- extract helper function from WeekCharts component
 
 ## Issues
 - find out why Vercel throws css away on publish

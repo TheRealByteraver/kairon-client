@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "0f54d3cf-3c5f-4487-9d90-6e06d0984580",
+		"name": "Kairon Labs Assignment - CoinGecko",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13424237",
+		"_collection_link": "https://lively-star-583983.postman.co/workspace/Project-9---Rest-API~62672559-cf8d-43e8-819a-81dfae167715/collection/13424237-0f54d3cf-3c5f-4487-9d90-6e06d0984580?action=share&creator=13424237&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "GET /coins/markets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum&precision=2&order=market_cap_desc",
+					"protocol": "https",
+					"host": [
+						"api",
+						"coingecko",
+						"com"
+					],
+					"path": [
+						"api",
+						"v3",
+						"coins",
+						"markets"
+					],
+					"query": [
+						{
+							"key": "vs_currency",
+							"value": "usd"
+						},
+						{
+							"key": "ids",
+							"value": "bitcoin,ethereum"
+						},
+						{
+							"key": "precision",
+							"value": "2"
+						},
+						{
+							"key": "order",
+							"value": "market_cap_desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /coins/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.coingecko.com/api/v3/coins/ethereum",
+					"protocol": "https",
+					"host": [
+						"api",
+						"coingecko",
+						"com"
+					],
+					"path": [
+						"api",
+						"v3",
+						"coins",
+						"ethereum"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /coins/{id}/market_chart/range",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=1685187196&to=1685799271",
+					"protocol": "https",
+					"host": [
+						"api",
+						"coingecko",
+						"com"
+					],
+					"path": [
+						"api",
+						"v3",
+						"coins",
+						"bitcoin",
+						"market_chart",
+						"range"
+					],
+					"query": [
+						{
+							"key": "vs_currency",
+							"value": "usd"
+						},
+						{
+							"key": "from",
+							"value": "1685187196"
+						},
+						{
+							"key": "to",
+							"value": "1685799271"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /coins/{id}/history",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.coingecko.com/api/v3/coins/bitcoin/history?date=03-06-2023&localization=false",
+					"protocol": "https",
+					"host": [
+						"api",
+						"coingecko",
+						"com"
+					],
+					"path": [
+						"api",
+						"v3",
+						"coins",
+						"bitcoin",
+						"history"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "03-06-2023"
+						},
+						{
+							"key": "localization",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
