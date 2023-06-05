@@ -88,3 +88,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - add comma's to display of large numbers in table
 - add market cap value to token object
 
+## useful resources:
+- https://tanstack.com/query/v4/docs/react/guides/query-functions
+- https://medium.com/doctolib/react-query-cachetime-vs-staletime-ec74defc483e
+- https://www.youtube.com/watch?v=Nm0inP3B_zs&list=PLC3y8-rFHvwjTELCrPrcZlo6blLBUspd2&index=2&ab_channel=Codevolution
+
+
