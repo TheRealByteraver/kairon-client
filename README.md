@@ -66,10 +66,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Todo
+- fix react-query issue: new coins do not show up until manual refresh, or showing wrong data
 - provide CryptoGecko attribution ("powered by CryptoGecko")
 - add garbage icon in frontend
 - test what happens if CoinGecko APi gets request for non existent token => unknown tokens are silently ignored
 - extract helper function from WeekCharts component
+- fix time delta calculation: go back exactly one week instead of "24 * 7" hours
 
 ## Issues
 - find out why Vercel throws css away on publish
@@ -85,3 +87,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Done
 - add comma's to display of large numbers in table
 - add market cap value to token object
+

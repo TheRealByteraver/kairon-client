@@ -27,10 +27,10 @@ const HomePage: React.FC<{}> = ({}) => {
         body: JSON.stringify({ id: token }),
       })
         .then((response) => response.json())
-        .then((body) => {
-          console.log("own api response: ", body);
-          return body;
-        })
+        // .then((body) => {
+        //   console.log("own api response: ", body);
+        //   return body;
+        // })
         .then((response) => {
           if (response.error !== undefined) {
             console.log("response.error:", response.error);
@@ -57,7 +57,7 @@ const HomePage: React.FC<{}> = ({}) => {
   };
 
   const tokens = getTokens();
-  console.log('tokens:', tokens);
+  console.log('tokens @ homePage:', tokens);
 
   return (
     <main>

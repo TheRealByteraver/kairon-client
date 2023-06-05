@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-table";
 
 import WeekChart from "@/Components/WeekChart";
+import { useMemo } from "react";
 
 const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
 
@@ -19,7 +20,7 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
     trend < 0 ? "text-red-500" : "text-green-500";
 
   // Column definitions
-  const defaultColumns = [
+  const defaultColumns = useMemo(() => [
     // Display Column
     columnHelper.display({
       id: "actions",
@@ -46,7 +47,10 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
     }),
     columnHelper.accessor("marketCapRank", {
       header: () => <div className="w-full text-center">#</div>,
-      cell: (props) => <div className="mr-4">{props.row.getValue("marketCapRank")}</div>,
+      cell: (props) => {
+        const val: number = props.row.getValue("marketCapRank");
+        return <div className="mr-4">{val}</div>;
+      },
     }),
     columnHelper.accessor("name", {
       id: "name",
@@ -132,7 +136,7 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
         );
       },
     }),
-  ];
+  ], []); // TODO: add dependencies
 
   const reactTable = useReactTable({
     data: data, // should be memoized
@@ -141,8 +145,8 @@ const OverviewTable: React.FC<{ data: Token[] }> = ({ data }) => {
     // debugAll: true,
   });
 
-  if(!data) {
-    return <div>Loading...</div>
+  if (!data) {
+    return <div>Loading...</div>;
   }
 
   return (

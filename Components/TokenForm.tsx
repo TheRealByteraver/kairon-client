@@ -25,7 +25,6 @@ const TokenForm: React.FC<{ addToken: (token: string) => void }> = ({
   } = useForm({ resolver: yupResolver(schema), defaultValues: { token: "" } });
 
   const onSubmit = (data: FieldValues) => {
-    console.log("own submit handler. data:", data);
     addToken(data.token);
     reset();
   };

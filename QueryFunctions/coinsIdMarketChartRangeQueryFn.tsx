@@ -9,10 +9,10 @@ const coinsIdMarketChartRangeQueryFn = async (
     `${COINGECKO_API_URL}/coins/${token}/market_chart/range?vs_currency=usd&from=${domain[0]}&to=${domain[1]}`
   )
     .then((response) => response.json())
-    .then((body) => {
-      console.log("api response for", token, ":", body);
-      return body;
-    })
+    // .then((body) => {
+    //   console.log("api response for", token, ":", body);
+    //   return body;
+    // })
     .then((response) => {
       if (response.error !== undefined) {
         console.log("response.error:", response.error);
