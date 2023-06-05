@@ -1,5 +1,3 @@
-// import { TOKEN_API_URL } from "@/QueryFunctions/globals";
-
 import Link from "next/link";
 
 import ApiContainer from "@/Components/ApiContainer";
@@ -14,6 +12,11 @@ const HomePage: React.FC<{}> = ({}) => {
     queryKey: ["GET /token"],
     // force error with: queryFn: () => Promise.reject("The error message here")
     queryFn: () => {
+      // The below IF statement was added to debug the CSS issue with Vercel
+      if (!process.env.NEXT_PUBLIC_TOKEN_API_URL) {        
+        return [{ id: "bitcoin", active: true }, { id: "ethereum", active: true }];
+      }
+
       return (
         fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`)
           // .then((response) => response.text())
