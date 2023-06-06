@@ -11,7 +11,7 @@ import Header from "@/Components/Header";
 const HomePage: React.FC<{}> = ({}) => {
   const queryClient = useQueryClient();
   const tokensQuery = useQuery({
-    refetchInterval: 1 * 1000,
+    // refetchInterval: 1 * 1000,
     // "queryKey" is always an array and should be unique across all queries
     queryKey: ["GET /token"],
     // force error with: queryFn: () => Promise.reject("The error message here")
@@ -94,7 +94,11 @@ const HomePage: React.FC<{}> = ({}) => {
   });
 
   const getTokens = (): string[] | undefined => {
-    if (tokensQuery.isLoading || tokensQuery.isError || ("error" in tokensQuery.data)) {
+    if (
+      tokensQuery.isLoading ||
+      tokensQuery.isError ||
+      "error" in tokensQuery.data
+    ) {
       return undefined;
     }
     return tokensQuery.data
@@ -105,10 +109,19 @@ const HomePage: React.FC<{}> = ({}) => {
   const tokens = getTokens();
   console.log("tokens @ homePage:", tokens);
 
+  const addToken = (token: string) => {
+    addTokenMutation.mutate(token);
+    queryClient.invalidateQueries(["GET /token"]); // does not work
+  };
+  const removeToken = (token: string) => {
+    archiveTokenMutation.mutate(token);
+    queryClient.invalidateQueries(["GET /token"]); // does not work
+  };
+
   return (
     <main className="p-2">
       <Header />
-      <TokenForm addToken={(token: string) => addTokenMutation.mutate(token)} />
+      <TokenForm addToken={addToken} />
 
       <div className="mt-4">
         {tokensQuery.isLoading && <p>retrieving saved tokens...</p>}
@@ -117,12 +130,7 @@ const HomePage: React.FC<{}> = ({}) => {
             tokensQuery.error
           )}`}</p>
         )}
-        {tokens && (
-          <ApiContainer
-            tokens={tokens}
-            removeToken={(token: string) => archiveTokenMutation.mutate(token)}
-          />
-        )}
+        {tokens && <ApiContainer tokens={tokens} removeToken={removeToken} />}
       </div>
     </main>
   );

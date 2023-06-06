@@ -13,7 +13,7 @@ const ApiContainer: React.FC<{
     refetchInterval: 30 * 1000,
     // staleTime: 300 * 1000,
     // "queryKey" is always an array and should be unique across all queries
-    queryKey: ["/coins/markets"],
+    queryKey: ["GET /coins/markets"],
     // force error with: queryFn: () => Promise.reject("The error message here")
     queryFn: () => {
       console.log("now running readCoinsMarkets() for tokens:", tokens);

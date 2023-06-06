@@ -86,20 +86,23 @@ const OverviewTable: React.FC<{
         id: "name",
         header: () => <div className="w-full text-left">Coin</div>,
         cell: (props) => (
-          <div className="flex items-center">
-            <div className="mx-1">
-              <Image
-                width="25"
-                height="25"
-                src={props.row.getValue("image")}
-                alt=""
-              />
+          <button>
+            {/* Link */}
+            <div className="flex items-center">
+              <div className="mx-1">
+                <Image
+                  width="25"
+                  height="25"
+                  src={props.row.getValue("image")}
+                  alt=""
+                />
+              </div>
+              <span className="mx-1 font-bold">{props.row.getValue("name")}</span>
+              <span className="uppercase text-gray-500">
+                {props.row.getValue("symbol")}
+              </span>
             </div>
-            <span className="mx-1 font-bold">{props.row.getValue("name")}</span>
-            <span className="uppercase text-gray-500">
-              {props.row.getValue("symbol")}
-            </span>
-          </div>
+          </button>
         ),
       }),
       columnHelper.accessor("currentPrice", {

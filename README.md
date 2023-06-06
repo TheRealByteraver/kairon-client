@@ -66,28 +66,28 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Todo
-- fix react-query issue: new coins do not show up until manual refresh
+- fix bug (probably related to next js) where updates from queries never shop up on the page (production build)
+- fix react-query issue: new coins do not show up until refresh --> gebruik invalidate query
+- db & api opnieuw maken met primary key & params
 - fix form input error msg CSS
 - provide CryptoGecko attribution ("powered by CryptoGecko")
-- add garbage icon in frontend
-- test what happens if CoinGecko APi gets request for non existent token => unknown tokens are silently ignored
-- extract helper function from WeekCharts component
-- fix time delta calculation: go back exactly one week instead of "24 * 7" hours
 
 ## Issues
 - find out why Vercel throws css away on publish
 - fix react query refetch interval thing
 - fix "hidden" columns => check react-table docs (https://tanstack.com/table/v8/docs/api/core/table)
 
-
 ## Ideas
 - connect kairon.erland.info to frontend on Vercel: https://kairon-client.vercel.app/ ? https ?
 - show whether CoinGecko API is online or not
-- 
 
 ## Done
+- extract helper function from WeekCharts component -> moved to function that queries coinGecko
+- fix time delta calculation: go back exactly one week instead of "24 * 7" hours -> not used anymore
+- add garbage icon in frontend
 - add comma's to display of large numbers in table
 - add market cap value to token object
+- test what happens if CoinGecko APi gets request for non existent token => unknown tokens are silently ignored
 
 ## useful resources:
 - https://tanstack.com/query/v4/docs/react/guides/query-functions
