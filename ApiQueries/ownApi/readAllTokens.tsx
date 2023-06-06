@@ -1,4 +1,6 @@
-const tokensQueryFn = (): Promise<OwnApiToken[]> | OwnApiToken[] => {
+// GET on /token: get all tokens
+
+const readAllTokens = (): Promise<OwnApiToken[] | OwnApiError> | OwnApiToken[] => {
   // The below IF statement was added to debug the CSS issue with Vercel:
   // We want to see at least two tokens in the list.
   if (!process.env.NEXT_PUBLIC_TOKEN_API_URL) {
@@ -28,4 +30,4 @@ const tokensQueryFn = (): Promise<OwnApiToken[]> | OwnApiToken[] => {
   );
 };
 
-export default tokensQueryFn;
+export default readAllTokens;

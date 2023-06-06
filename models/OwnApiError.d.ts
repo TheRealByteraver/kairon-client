@@ -1,0 +1,3 @@
+interface OwnApiError {
+  error: string;
+}

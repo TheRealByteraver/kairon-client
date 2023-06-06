@@ -3,7 +3,9 @@ import Link from "next/link";
 import ApiContainer from "@/Components/ApiContainer";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import TokenForm from "./TokenForm";
-import tokensQueryFn from "@/QueryFunctions/tokensQueryFn";
+import readAllTokens from "@/ApiQueries/ownApi/readAllTokens";
+import updateToken from "@/ApiQueries/ownApi/updateToken";
+import createToken from "@/ApiQueries/ownApi/createToken";
 
 const HomePage: React.FC<{}> = ({}) => {
   const queryClient = useQueryClient();
@@ -12,131 +14,86 @@ const HomePage: React.FC<{}> = ({}) => {
     // "queryKey" is always an array and should be unique across all queries
     queryKey: ["GET /token"],
     // force error with: queryFn: () => Promise.reject("The error message here")
-    queryFn: tokensQueryFn,
+    queryFn: readAllTokens,
   });
 
+  // docs: https://tanstack.com/query/latest/docs/react/guides/updates-from-mutation-responses
   const addTokenMutation = useMutation({
-    mutationFn: async (token: string) => {
-      // check if the token is present in the list of archived tokens
-      // if so, simply reactivate it
-      if (tokensQuery.data) {
+    // Supposedly we should set the Query Data (react-query's internal cache)
+    // in an onSuccess() function rather than in the mutationFn directly but
+    // the below approach is more feasible as we need different api functions
+    // here (we need to either un-archive the token or create it):
+    mutationFn: async (tokenId: string) => {
+      // check if the token is present in the list of archived
+      // tokens and if so, simply reactivate it:
+      if (tokensQuery.data && !("error" in tokensQuery.data)) {
         let foundToken = false;
-        const newTokenData = tokensQuery.data.map((t: OwnApiToken) => {
-          if (t.id === token) {
+        const newTokenData = tokensQuery.data.map((token: OwnApiToken) => {
+          if (token.id === tokenId) {
             foundToken = true;
-            return { id: t.id, active: true }
+            return { id: token.id, active: true };
           }
-          return t;
+          return token;
         });
 
         if (foundToken) {
-
-          // https://tanstack.com/query/latest/docs/react/guides/updates-from-mutation-responses
-
-        // TODO:
-        //   queryClient.setQueryData(
-        //     ["GET /token"],
-        //     (oldTokenList: OwnApiToken[] | undefined): OwnApiToken[] => {
-        //       let newTokenList: OwnApiToken[];
-        //       if (oldTokenList) {
-        //         newTokenList = [...oldTokenList, response];
-        //       } else {
-        //         newTokenList = [response];
-        //       }
-        //       return newTokenList;
-        //     }
-        //   );
-        //   return tokensQuery.data;
+          // Update Query cache
+          queryClient.setQueryData(["GET /token"], newTokenData);
+          // update API state
+          const response = await updateToken({ id: tokenId, active: true });
+          // deal with error here... should only happen if own api is down
+          // all done
+          return tokensQuery.data;
         }
-
-        // UPDATE API HERE WITH fetch 'PUT' !
       }
-
-      return (
-        fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: token }),
-        })
-          .then((response) => response.json())
-          // .then((response) => {
-          //   console.log("own api response: ", response);
-          //   return response;
-          // })
-          .then((response) => {
-            if (response.error !== undefined) {
-              console.log("response.error:", response.error);
-              throw new Error(response.error);
+      // No, the token was not yet present as an archived
+      // token, so we need to create a new token:
+      const response = await createToken(tokenId);
+      if (!("error" in response)) {
+        // add the new token directly to our list of tokens in the Query
+        // cache, no refetching or invalidating necessary. Note how we
+        // update the query data in an immutable fashion, like we would
+        // update a React state.
+        queryClient.setQueryData(
+          ["GET /token"],
+          (oldTokenData: OwnApiToken[] | undefined): OwnApiToken[] => {
+            let newTokenData: OwnApiToken[];
+            if (oldTokenData) {
+              newTokenData = [...oldTokenData, response];
+            } else {
+              newTokenData = [response];
             }
-            // add the new token directly to our list of tokens in the Query
-            // cache, no refetching or invalidating necessary:
-            queryClient.setQueryData(
-              ["GET /token"],
-              (oldTokenList: OwnApiToken[] | undefined): OwnApiToken[] => {
-                let newTokenList: OwnApiToken[];
-                if (oldTokenList) {
-                  newTokenList = [...oldTokenList, response];
-                } else {
-                  newTokenList = [response];
-                }
-                return newTokenList;
-              }
-            );
-            return response;
-          })
-          .catch((error) => {
-            throw new Error(error);
-          })
-      );
+            return newTokenData;
+          }
+        );
+      }
     },
   });
 
   const archiveTokenMutation = useMutation({
-    mutationFn: async (token: string) =>
-      fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token/${token}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: token, active: 0 }),
-      })
-        .then((response) => response.json())
-        // .then((response) => {
-        //   console.log("own api response: ", response);
-        //   return response;
-        // })
-        .then((response) => {
-          if (response.error !== undefined) {
-            console.log("response.error:", response.error);
-            throw new Error(response.error);
-          }
-          // add the new token directly to our list of tokens in the Query
-          // cache, no refetching or invalidating necessary:
-          queryClient.setQueryData(
-            ["GET /token"],
-            (oldTokenList: OwnApiToken[] | undefined): OwnApiToken[] => {
-              let newTokenList: OwnApiToken[];
-              if (oldTokenList) {
-                newTokenList = oldTokenList.filter(
-                  (token: OwnApiToken) => token.id !== response.id
-                );
-              } else {
-                newTokenList = [response];
-              }
-              return newTokenList;
+    mutationFn: async (tokenId: string) => {
+      const response = await updateToken({ id: tokenId, active: false });
+
+      if (!("error" in response)) {
+        queryClient.setQueryData(
+          ["GET /token"],
+          (oldTokenData: OwnApiToken[] | undefined): OwnApiToken[] => {
+            let newTokenData: OwnApiToken[] = [];
+            if (oldTokenData) {
+              newTokenData = oldTokenData.filter(
+                (token: OwnApiToken) => token.id !== tokenId
+              );
             }
-          );
-          return response;
-        })
-        .catch((error) => {
-          throw new Error(error);
-        }),
+            return newTokenData;
+          }
+        );
+        return response; // not used really as we have no onSuccess function
+      }
+    },
   });
 
   const getTokens = (): string[] | undefined => {
-    if (tokensQuery.isLoading || tokensQuery.isError) {
+    if (tokensQuery.isLoading || tokensQuery.isError || ("error" in tokensQuery.data)) {
       return undefined;
     }
     return tokensQuery.data

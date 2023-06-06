@@ -1,4 +1,4 @@
-import coinsMarketsQueryFn from "@/QueryFunctions/coinsMarketsQueryFn";
+import readCoinsMarkets from "@/ApiQueries/CoinGeckoApi/readCoinsMarkets";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,7 +17,7 @@ const ApiContainer: React.FC<{
     // force error with: queryFn: () => Promise.reject("The error message here")
     queryFn: () => {
       console.log("now running coinsMarketsQuery for tokens:", tokens);
-      return coinsMarketsQueryFn(tokens);
+      return readCoinsMarkets(tokens);
     },
   });
 

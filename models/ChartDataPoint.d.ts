@@ -1,4 +1,4 @@
-type ChartDataPoint = {
+interface ChartDataPoint {
   xAxisValue: number;
   yAxisValue: number;
 };

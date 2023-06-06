@@ -1,6 +1,6 @@
 import { COINGECKO_API_URL } from "./globals";
 
-const coinsMarketsQueryFn = async (
+const readCoinsMarkets = async (
   tokens: string[]
 ): Promise<CoinGeckoApiToken[]> => {
   // The return below is necessary because querying CoinGecko without 
@@ -31,4 +31,4 @@ const coinsMarketsQueryFn = async (
   );
 };
 
-export default coinsMarketsQueryFn;
+export default readCoinsMarkets;
