@@ -16,7 +16,7 @@ const ApiContainer: React.FC<{
     queryKey: ["/coins/markets"],
     // force error with: queryFn: () => Promise.reject("The error message here")
     queryFn: () => {
-      console.log("now running coinsMarketsQuery for tokens:", tokens);
+      console.log("now running readCoinsMarkets() for tokens:", tokens);
       return readCoinsMarkets(tokens);
     },
   });
@@ -83,7 +83,6 @@ const ApiContainer: React.FC<{
       removeToken={removeToken}
     />
   );
-  // return <OverviewTable tokenData={tokenData} trendData={trendData} />;
 };
 
 export default ApiContainer;
