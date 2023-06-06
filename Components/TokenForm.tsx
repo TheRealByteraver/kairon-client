@@ -2,6 +2,7 @@ import { FieldValues } from "react-hook-form/dist/types"; // had to add this typ
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import Button from "./UI/Button";
 
 const TokenForm: React.FC<{ addToken: (token: string) => void }> = ({
   addToken,
@@ -32,12 +33,12 @@ const TokenForm: React.FC<{ addToken: (token: string) => void }> = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-4 pt-4 pl-2 flex flex-row flex-1 items-stretch"
+      className="mt-4 pt-4 flex flex-row flex-1 items-stretch"
     >
       <div className="relative flex flex-col w-96">
         <label
           htmlFor="tokenInput"
-          className="absolute -top-3 left-3 px-2 text-md font-semibold bg-white"
+          className="absolute -top-3 left-3 px-2 text-md font-normal bg-white"
         >
           Token ID
         </label>
@@ -46,18 +47,13 @@ const TokenForm: React.FC<{ addToken: (token: string) => void }> = ({
           type="text"
           placeholder="enter token id..."
           {...register("token")}
-          className="block p-2 h-12 outline-none border border-black rounded-lg"
+          className="mr-5 block p-2 h-12 outline-none border border-black rounded-lg"
         />
 
         {/* the .toString() is added to prevent a TS error */}
         <p>{errors.token?.message?.toString()}</p>
       </div>
-      <button
-        type="submit"
-        className="ml-5 h-12 py-2 px-12 rounded-lg bg-green-600 text-white"
-      >
-        ADD
-      </button>
+      <Button type="submit">ADD</Button>
     </form>
   );
 };

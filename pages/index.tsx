@@ -6,6 +6,7 @@ import TokenForm from "@/Components/TokenForm";
 import readAllTokens from "@/ApiQueries/ownApi/readAllTokens";
 import updateToken from "@/ApiQueries/ownApi/updateToken";
 import createToken from "@/ApiQueries/ownApi/createToken";
+import Header from "@/Components/Header";
 
 const HomePage: React.FC<{}> = ({}) => {
   const queryClient = useQueryClient();
@@ -105,17 +106,11 @@ const HomePage: React.FC<{}> = ({}) => {
   console.log("tokens @ homePage:", tokens);
 
   return (
-    <main>
-      <header>
-        <nav>
-          <Link href="/archive">Archive</Link>
-        </nav>
-      </header>
-      <hr className="mb-4" />
-
+    <main className="p-2">
+      <Header />
       <TokenForm addToken={(token: string) => addTokenMutation.mutate(token)} />
 
-      <div className="p-2 mt-4">
+      <div className="mt-4">
         {tokensQuery.isLoading && <p>retrieving saved tokens...</p>}
         {tokensQuery.isError && (
           <p>{`An error occured retrieving saved tokens: ${JSON.stringify(

@@ -66,7 +66,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Todo
-- fix react-query issue: new coins do not show up until manual refresh, or showing wrong data
+- fix react-query issue: new coins do not show up until manual refresh
+- fix form input error msg CSS
 - provide CryptoGecko attribution ("powered by CryptoGecko")
 - add garbage icon in frontend
 - test what happens if CoinGecko APi gets request for non existent token => unknown tokens are silently ignored
