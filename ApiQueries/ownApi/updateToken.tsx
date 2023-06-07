@@ -11,7 +11,7 @@ const updateToken = async (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(token),
+      body: JSON.stringify({ active: token.active }),
     })
       .then((response) => response.json())
       // .then((response) => {

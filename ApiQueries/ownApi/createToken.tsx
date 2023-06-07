@@ -12,7 +12,7 @@ const createToken = async (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(tokenId),
+      body: JSON.stringify({ id: tokenId }),
     })
       .then((response) => response.json())
       // .then((response) => {

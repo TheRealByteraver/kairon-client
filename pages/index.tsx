@@ -21,7 +21,11 @@ const HomePage: React.FC<{}> = ({}) => {
     // "queryKey" is always an array and should be unique across all queries
     queryKey: ["GET /token"],
     // force error with: queryFn: () => Promise.reject("The error message here")
-    queryFn: readAllTokens,
+    queryFn: async () => {      
+      const response = await readAllTokens();
+      // console.log('Running readAllTokens(), returned: ', response);
+      return response;
+    },
   });
 
   const getTokens = (): string[] | undefined => {
@@ -39,108 +43,38 @@ const HomePage: React.FC<{}> = ({}) => {
 
   // docs: https://tanstack.com/query/latest/docs/react/guides/updates-from-mutation-responses
   const addTokenMutation = useMutation({
-    // Supposedly we should set the Query Data (react-query's internal cache)
-    // in an onSuccess() function rather than in the mutationFn directly but
-    // the below approach is more feasible as we need different api functions
-    // here (we need to either un-archive the token or create it):
     mutationFn: async (tokenId: string) => {
+      // console.log('now calling addTokenMutation s function for tokenId', tokenId);
       // check if the token is present in the list of archived
       // tokens and if so, simply reactivate it:
       if (tokensQuery.data && !("error" in tokensQuery.data)) {
-        let foundToken = false;
-        const newTokenData = tokensQuery.data.map((token: OwnApiToken) => {
-          if (token.id === tokenId) {
-            foundToken = true;
-            return { active: true, id: token.id };
-          }
-          return token;
-        });
+        const filteredTokens = tokensQuery.data.filter((token: OwnApiToken) => tokenId === token.id);
+        if (filteredTokens.length === 1) {
 
-        if (foundToken) {
-          // update API state
+          // found token, need to reactivate it
           const response = await updateToken({ active: true, id: tokenId });
-          // deal with error here... should only happen if own api is down
-          // Update Query cache
-          console.log("newTokenData: ", newTokenData);
-          console.log("tokensQuery.data before update: ", tokensQuery.data);
-          queryClient.setQueryData(["GET /token"], newTokenData);
-          // tokensQuery.data is not updated at this point :(
-          console.log(
-            "addTokenMutationFn, reactivating, returning newTokenData = ",
-            newTokenData
-          );
-          const queryCache = queryClient.getQueryCache();
-          console.log("queryCache = ", queryCache);
-          const mutationCache = queryClient.getMutationCache();
-          console.log("queryCache = ", mutationCache);
-
-          return newTokenData;
+          return // tokensQuery.data;
         }
-      }
-      // No, the token was not yet present as an archived
-      // token, so we need to create a new token:
-      const response = await createToken(tokenId);
-      if (!("error" in response)) {
-        // add the new token directly to our list of tokens in the Query
-        // cache, no refetching or invalidating necessary. Note how we
-        // update the query data in an immutable fashion, like we would
-        // update a React state.
-        queryClient.setQueryData(
-          ["GET /token"],
-          (oldTokenData: OwnApiToken[] | undefined): OwnApiToken[] => {
-            let newTokenData: OwnApiToken[];
-            if (oldTokenData) {
-              newTokenData = [...oldTokenData, response];
-            } else {
-              newTokenData = [response];
-            }
-            return newTokenData;
-          }
-        );
-        console.log(
-          "addTokenMutationFn, new, returning tokensQuery.data = ",
-          tokensQuery.data
-        );
-        return tokensQuery.data;
+        // No, the token was not yet present, create it anew:
+        // console.log('calling createToken from addTokenMutation with arg', tokenId);
+        const response = await createToken(tokenId);
+        // return tokensQuery.data;
       }
     },
     onSuccess: () => {
-      // queryClient.invalidateQueries(["GET /token"]), // not necessary
+      queryClient.invalidateQueries(["GET /token"]), 
       queryClient.invalidateQueries(["GET /coins/markets"]);
     },
   });
 
   const archiveTokenMutation = useMutation({
     mutationFn: async (tokenId: string) => {
-      const response = await updateToken({ id: tokenId, active: false });
-
-      if (!("error" in response)) {
-        queryClient.setQueryData(
-          ["GET /token"],
-          (oldTokenData: OwnApiToken[] | undefined): OwnApiToken[] => {
-            console.log("must remove:", tokenId);
-            console.log("oldTokenData:", oldTokenData);
-            let newTokenData: OwnApiToken[] = [];
-            if (oldTokenData) {
-              newTokenData = oldTokenData.map((token: OwnApiToken) =>
-                token.id === tokenId ? { id: token.id, active: false } : token
-              );
-            }
-            console.log("newTokenData:", newTokenData);
-            return newTokenData;
-          }
-        );
-
-        console.log(
-          "archiveTokenMutationFn, returning tokensQuery.data = ",
-          tokensQuery.data
-        );
-        return tokensQuery.data; // not used really as we have no onSuccess function
-      }
+      // console.log('calling updateToken from archiveTokenMutation with arg', { active: false, id: tokenId });
+      const response = await updateToken({ active: false, id: tokenId });
     },
     onSuccess: () => {
-      // queryClient.invalidateQueries(["GET /token"]), // not necessary
-      queryClient.invalidateQueries(["GET /coins/markets"]); // not needed ?
+      queryClient.invalidateQueries(["GET /token"]), 
+      queryClient.invalidateQueries(["GET /coins/markets"]); 
     },
   });
 
@@ -182,26 +116,18 @@ const HomePage: React.FC<{}> = ({}) => {
   };
 
   const data = getData();
-  // console.log("data:", data);
 
   // -------------------------------------------------------------------------------
 
   const tokens = getTokens();
 
-  // console.log("tokens @ homePage:", tokens);
-
   const addToken = (token: string) => {
-    // addTokenMutation.mutate(token);
-    updateToken({active: true, id: token}).then(() =>                  // TEMP!!!!! DEBUG TODO
-      queryClient.invalidateQueries(["GET /token"])
-    );
+    addTokenMutation.mutate(token);
+    queryClient.invalidateQueries(["GET /token"]);
   };
   const removeToken = (token: string) => {
-    // archiveTokenMutation.mutate(token);
-
-    updateToken({active: false, id: token}).then(() =>                  // TEMP!!!!! DEBUG TODO
-      queryClient.invalidateQueries(["GET /token"])
-    );
+    archiveTokenMutation.mutate(token);
+    queryClient.invalidateQueries(["GET /token"]);
   };
 
   return (
@@ -229,37 +155,6 @@ const HomePage: React.FC<{}> = ({}) => {
               ))}
           </ul>
         )}
-
-        {/* {data &&
-          <OverviewTable
-            data={data}
-          removeToken={removeToken}
-        />        
-        } */}
-
-        {/* {tokens && (
-          <ApiContainer
-            tokens={(tokensQuery.data! as OwnApiToken[])
-              .filter((token) => token.active)
-              .map((token) => token.id)}
-            removeToken={removeToken}
-            queryState={tokensQuery.isSuccess}
-          />
-        )} */}
-
-        {/* {tokens && (
-          <ul>
-            {data &&
-              data
-                .filter((token) => token.id)
-                .map((token) => (
-                  <li key={token.id}>
-                    <button onClick={() => removeToken(token.id)}>XXX</button>{" "}
-                    {token.id}
-                  </li>
-                ))}
-          </ul>
-        )} */}
       </div>
     </main>
   );
