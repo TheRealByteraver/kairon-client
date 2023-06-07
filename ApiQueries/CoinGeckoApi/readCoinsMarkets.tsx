@@ -3,7 +3,7 @@ import { COINGECKO_API_URL } from "./globals";
 const readCoinsMarkets = async (
   tokens: string[]
 ): Promise<CoinGeckoApiToken[]> => {
-  // The return below is necessary because querying CoinGecko without 
+  // The return below is necessary because querying CoinGecko without
   // specifying any Token id will return a list of the first 100 tokens
   // (highest in value first, descending)
   if (tokens.length === 0) {
@@ -14,10 +14,6 @@ const readCoinsMarkets = async (
       `${COINGECKO_API_URL}/coins/markets?vs_currency=usd&ids=${tokens.join()}&sparkline=true&price_change_percentage=1h,24h,7d&precision=2`
     )
       .then((response) => response.json())
-      // .then((body) => {
-      //   console.log("api response: ", body);
-      //   return body;
-      // })
       .then((response) => {
         if (response.error !== undefined) {
           console.log("response.error:", response.error);

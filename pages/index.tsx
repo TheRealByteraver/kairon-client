@@ -1,51 +1,41 @@
 import TokenForm from "@/Components/TokenForm";
-import useTokens from "@/ApiQueries/ownApi/readAllTokens";
 import Header from "@/Components/Header";
+
 import { useEffect, useState } from "react";
-import useUpateToken from "@/ApiQueries/ownApi/updateToken";
+
+import useTokens from "@/hooks/useTokens";
+import useUpateToken from "@/hooks/useUpateToken";
+import readCoinsMarkets from "@/ApiQueries/CoinGeckoApi/readCoinsMarkets";
+import parseCoinGeckoApiToken from "@/helpers/parseCoinGeckoApiToken";
 
 const HomePage: React.FC<{}> = ({}) => {
   const [data, setData] = useState<CoinGeckoApiToken[]>([]);
   const { data: tokens = [], error } = useTokens();
-  const { mutate } = useUpateToken();
+  const { mutate: updateTokenMutation } = useUpateToken();
 
   useEffect(() => {
     if (tokens.length) {
-      // console.log('tokens.length:', tokens.length);
-      console.log("tokens:", tokens);
-
-      const tokenStrArr = tokens.map((token) => token.id);
-
+      const tokensString = tokens.map((token) => token.name).join();
       fetch(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenStrArr.join()}&sparkline=true&price_change_percentage=1h,24h,7d&precision=2`
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokensString}&sparkline=true&price_change_percentage=1h,24h,7d&precision=2`
       )
         .then((data) => data.json())
         .then((data) => setData(data));
 
-      // readCoinsMarkets(tokens).then((apiTokens) => {
-      //   settokenData(
-      //     apiTokens.map((apiToken) => parseCoinGeckoApiToken(apiToken))
-      //   );
+      // const tokenStrings = tokens.map((token) => token.name);
+      // readCoinsMarkets(tokenStrings as string[]).then((coinGeckoApiTokens) => {
+      //   setData(coinGeckoApiTokens.map((coinGeckoApiToken) => parseCoinGeckoApiToken(coinGeckoApiToken)));
       // });
     }
   }, [tokens]);
 
-  console.log("data:", data);
+  const addToken = (tokenName: string) => {
 
-  const handleDelete = (id: string) => {
-    const payload = { id: id, active: 0 };
-    mutate(payload);
   };
-
-  const addToken = (token: string) => {
-    // addTokenMutation.mutate(token);
-    // queryClient.invalidateQueries(["GET /token"]);
-    // setRefetch(true);
-  };
-  const removeToken = (token: string) => {
-    // archiveTokenMutation.mutate(token);
-    // queryClient.invalidateQueries(["GET /token"]);
-    // setRefetch(true);
+  
+  const removeToken = (id: number) => {
+    const payload: OwnApiToken = { id: id, active: 0 };
+    updateTokenMutation(payload);
   };
 
   return (
@@ -54,14 +44,18 @@ const HomePage: React.FC<{}> = ({}) => {
       <TokenForm addToken={addToken} />
 
       <div className="mt-4">
-        {error && <div>An error occured retrieving the tokens from our api</div>}
+        {(error !== undefined) && (error !== null) && (
+          <div>An error occured retrieving the tokens from our api</div>
+        )}
 
         {tokens && !("error" in tokens) && (
           <ul>
             {tokens.map((token) => (
               <li key={token.id}>
-                <button onClick={() => handleDelete(token.id)}>XXX</button>{" "}
-                {token.id}
+                <button onClick={() => removeToken(token.id as number)}>
+                  XXX
+                </button>{" "}
+                {token.name}
               </li>
             ))}
           </ul>

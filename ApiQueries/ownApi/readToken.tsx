@@ -1,15 +1,11 @@
-// GET on /token/<id>: get a single token
-// <id> is the id of the token, e.g. "bitcoin", "ethereum"
-// returns: OwnApiToken object on success, error object on error
+// GET on /tokens/<id>: get a single token
+// <id> is the id aka primary key of the token, e.g. 1, 2, 3, etc
+// returns: OwnApiToken object on success, throws error on error
 
-const readToken = async (token: string): Promise<OwnApiToken | OwnApiError> => {
+const readToken = async (tokenId: number): Promise<OwnApiToken> => {
   return (
-    fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token/${token}`)
+    fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/tokens/${tokenId}`)
       .then((response) => response.json())
-      // .then((response) => {
-      //   console.log("own api response: ", response);
-      //   return response;
-      // })
       .then((response) => {
         if (response.error !== undefined) {
           console.log("response.error:", response.error);

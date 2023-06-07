@@ -1,24 +1,20 @@
-// POST on /token: create a single token
-// Api parameter: Partial<OwnApiToken> (we only need the id,
+// POST on /tokens: create a single token
+// Api parameter: Partial<OwnApiToken> (we only need the name of the token,
 // not the "active" setting which is always true)
 // returns: created token object on success, error object on error
 
 const createToken = async (
-  tokenId: string
-): Promise<OwnApiToken | OwnApiError> => {
+  tokenName: string
+): Promise<OwnApiToken> => {
   return (
-    fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`, {
+    fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/tokens`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id: tokenId }),
+      body: JSON.stringify({ name: tokenName }),
     })
       .then((response) => response.json())
-      // .then((response) => {
-      //   console.log("own api response: ", response);
-      //   return response;
-      // })
       .then((response) => {
         if (response.error !== undefined) {
           console.log("response.error:", response.error);
