@@ -1,14 +1,17 @@
 // GET on /token: get all tokens
 
-const readAllTokens = (): Promise<OwnApiToken[] | OwnApiError> | OwnApiToken[] => {
-  // The below IF statement was added to debug the CSS issue with Vercel:
+import { useQuery } from "@tanstack/react-query";
+
+// const readAllTokens = (): Promise<OwnApiToken[] | OwnApiError> | OwnApiToken[] => {
+const readAllTokens = (): Promise<OwnApiToken[] | OwnApiError> => {
+    // The below IF statement was added to debug the CSS issue with Vercel:
   // We want to see at least two tokens in the list.
-  if (!process.env.NEXT_PUBLIC_TOKEN_API_URL) {
-    return [
-      { id: "bitcoin", active: true },
-      { id: "ethereum", active: true },
-    ];
-  }
+  // if (!process.env.NEXT_PUBLIC_TOKEN_API_URL) {
+  //   return [
+  //     { id: "bitcoin", active: true },
+  //     { id: "ethereum", active: true },
+  //   ];
+  // }
 
   return (
     fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token`)
@@ -30,4 +33,9 @@ const readAllTokens = (): Promise<OwnApiToken[] | OwnApiError> | OwnApiToken[] =
   );
 };
 
-export default readAllTokens;
+function useTokens() {
+  return useQuery(["tokens"], () => readAllTokens())
+}
+
+export default useTokens;
+// export default readAllTokens;

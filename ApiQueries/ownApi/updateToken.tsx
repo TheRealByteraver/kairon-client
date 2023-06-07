@@ -2,16 +2,23 @@
 // Api parameter: OwnApiToken
 // returns: updated token object on success, error object on error
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+type Payload = {
+  id: string;
+  active: boolean;
+};
+
 const updateToken = async (
-  token: OwnApiToken
-): Promise<OwnApiToken | OwnApiError> => {
+  payload: Payload
+): Promise<Payload | OwnApiError> => {
   return (
-    fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token/${token.id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/token/${payload.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ active: token.active }),
+      body: JSON.stringify({ active: payload.active }),
     })
       .then((response) => response.json())
       // .then((response) => {
@@ -31,4 +38,15 @@ const updateToken = async (
   );
 };
 
-export default updateToken;
+function useUpateToken() {
+  const queryClient = useQueryClient();
+  return useMutation(payload => updateToken(payload), {
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries(["tokens"])
+    }
+  })
+}
+
+export default useUpateToken;
+
+// export default updateToken;
