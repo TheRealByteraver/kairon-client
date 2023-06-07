@@ -1,17 +1,21 @@
 import readCoinsMarkets from "@/ApiQueries/CoinGeckoApi/readCoinsMarkets";
 
-import { useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
 import OverviewTable from "./OverviewTable";
 
 const ApiContainer: React.FC<{
   tokens: string[];
   removeToken: (token: string) => void;
-}> = ({ tokens, removeToken }) => {
+  queryState: boolean
+}> = ({ tokens, removeToken, queryState }) => {
+
+  console.log("rendering ApiContainer, queryState: ", queryState, "tokens:", tokens);
+
   const coinsMarketsQuery = useQuery({
     // cacheTime: 300 * 1000,
-    refetchInterval: 30 * 1000,
-    // staleTime: 300 * 1000,
+    // refetchInterval: 30 * 1000,
+    staleTime: 30 * 1000,
     // "queryKey" is always an array and should be unique across all queries
     queryKey: ["GET /coins/markets"],
     // force error with: queryFn: () => Promise.reject("The error message here")
@@ -19,6 +23,7 @@ const ApiContainer: React.FC<{
       console.log("now running readCoinsMarkets() for tokens:", tokens);
       return readCoinsMarkets(tokens);
     },
+    enabled: queryState
   });
 
   // Get a list tokens
@@ -72,16 +77,32 @@ const ApiContainer: React.FC<{
   };
 
   const data = getData();
+  console.log('data:', data);
 
   if (!data) {
     return <div>Loading...</div>;
   }
 
   return (
-    <OverviewTable
-      data={data}
-      removeToken={removeToken}
-    />
+    // <OverviewTable
+    //   data={data}
+    //   removeToken={removeToken}
+    // />
+
+    <>
+      {tokens && (
+        <ul>
+          {(data)
+            .filter((token) => token.id)
+            .map((token) => (
+              <li key={token.id}>
+                <button onClick={() => removeToken(token.id)}>XXX</button>{" "}
+                {token.id}
+              </li>
+            ))}
+        </ul>
+      )}
+    </>
   );
 };
 
