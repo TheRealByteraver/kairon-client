@@ -39,7 +39,10 @@ const OverviewTable: React.FC<{
         cell: (props) => (
           <div className="flex justify-center items-center -mr-2">
             <button
-              onClick={() => removeToken(props.row.getValue("id"))}
+              onClick={() => {
+                // console.log('calling removeToken from inside OverviewTable with param', props.row.getValue("id"))
+                removeToken(props.row.getValue("id"))
+              }}
               className="w-6 h-6"
             >
               <svg
