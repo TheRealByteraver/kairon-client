@@ -6,7 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button: React.FC<ButtonProps> = ({ children, ...restProps }) => {
   return (
-    <button className="h-12 py-2 px-12 rounded-lg bg-green-600 text-white capitalize" {...restProps}>
+    <button className="m-1 h-12 py-2 px-12 rounded-lg bg-green-600 text-white capitalize" {...restProps}>
       {children}
     </button>
   );

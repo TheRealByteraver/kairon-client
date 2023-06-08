@@ -2,9 +2,9 @@ import readAllTokens from "@/ApiQueries/ownApi/readAllTokens";
 
 import { useQuery } from "@tanstack/react-query";
 
-const useTokens = () => {
+const useInactiveTokens = () => {
   const getInactiveTokens = true;
-  return useQuery(["tokens"], () => readAllTokens(getInactiveTokens))
+  return useQuery(["inactiveTokens"], () => readAllTokens(getInactiveTokens))
 }
 
-export default useTokens;
+export default useInactiveTokens;

@@ -1,4 +1,5 @@
 interface Token {
+  apiId: number;
   id: string; // e.g. bitcoin, ethereum etc
   marketCapRank: number;
   symbol: string; // e.g. btc, eth etc

@@ -12,7 +12,7 @@ import { useMemo } from "react";
 
 const OverviewTable: React.FC<{
   data: Token[];
-  removeToken: (token: string) => void;
+  removeToken: (tokenId: number) => void;
 }> = ({ data, removeToken }) => {
   // Utility fn for creating column definitions
   const columnHelper = createColumnHelper<Token>();
@@ -24,6 +24,14 @@ const OverviewTable: React.FC<{
   // Column definitions
   const defaultColumns = useMemo(
     () => [
+      columnHelper.accessor("apiId", {
+        // we don't want to display the ticker as a separate column but we need
+        // to include it here or we can't use it in the "name" column below.
+        // There should be a better way but this works right now.
+        // id: undefined,
+        header: undefined,
+        cell: () => null,
+      }),
       // Accessor Column
       columnHelper.accessor("id", {
         // we don't want to display the ticker as a separate column but we need
@@ -39,10 +47,7 @@ const OverviewTable: React.FC<{
         cell: (props) => (
           <div className="flex justify-center items-center -mr-2">
             <button
-              onClick={() => {
-                // console.log('calling removeToken from inside OverviewTable with param', props.row.getValue("id"))
-                removeToken(props.row.getValue("id"))
-              }}
+              onClick={() => removeToken(props.row.getValue("apiId"))}
               className="w-6 h-6"
             >
               <svg
@@ -87,9 +92,9 @@ const OverviewTable: React.FC<{
       }),
       columnHelper.accessor("name", {
         id: "name",
-        header: () => <div className="w-full text-left">Coin</div>,
+        header: () => <div className="w-full ml-2 text-left">Coin</div>,
         cell: (props) => (
-          <button>
+          <button className="w-full text-left">
             {/* Link */}
             <div className="flex items-center">
               <div className="mx-1">
@@ -100,7 +105,9 @@ const OverviewTable: React.FC<{
                   alt=""
                 />
               </div>
-              <span className="mx-1 font-bold">{props.row.getValue("name")}</span>
+              <span className="mx-1 font-bold">
+                {props.row.getValue("name")}
+              </span>
               <span className="uppercase text-gray-500">
                 {props.row.getValue("symbol")}
               </span>
@@ -173,8 +180,8 @@ const OverviewTable: React.FC<{
         },
       }),
     ],
-    []
-  ); // TODO: add dependencies
+    [columnHelper, removeToken]
+  );
 
   const reactTable = useReactTable({
     data: data, // should be memoized
@@ -186,6 +193,8 @@ const OverviewTable: React.FC<{
   if (!data) {
     return <div>Loading...</div>;
   }
+
+  console.log('rendering table');
 
   return (
     <table className="w-[1280px] border-collapse font-bold leading-10 text-right">

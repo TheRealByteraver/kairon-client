@@ -35,7 +35,7 @@ const TokenForm: React.FC<{ addToken: (token: string) => void }> = ({
       onSubmit={handleSubmit(onSubmit)}
       className="mt-4 pt-4 flex flex-row flex-1 items-stretch"
     >
-      <div className="relative flex flex-col w-96">
+      <div className="mt-1 relative flex flex-col w-96">
         <label
           htmlFor="tokenInput"
           className="absolute -top-3 left-3 px-2 text-md font-normal bg-white"

@@ -27,7 +27,7 @@ npm run start
 
 ### Install the server
 
-Open a new terminal window and download the Python api server repository. You might need to install [pipenv](https://pypi.org/project/pipenv/) first.
+Open a new terminal window and download the Python api server repository. You might need to install [pipenv](https://pypi.org/project/pipenv/) first. If you want to start with an empty database you'll have to delete the db.sqlite file and create a new db (see below)
 
 ```bash
 cd ..
@@ -37,12 +37,12 @@ pipenv shell
 pip install -r requirements.txt
 ```
 
-We also need to start Python and create the sqlite database - we need to do this only once:
+Creation of the sqlite database - we need to do this only once. First, start python:
 ```bash
 python
 ```
 
-The cursor now changes to the Python prompt. Now, enter the following commands to create the database:
+The cursor now changes to the Python >>> prompt. Now, enter the following commands to create the database:
 ```bash
 from app import app
 from app import db
@@ -58,7 +58,7 @@ python app.py
 
 ### Running the app
 
-Open [http://127.0.0.1:5000](http://127.0.0.1:5000) to check if the api is up and ready.
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000) to check if the api is up and ready. You should see some text explaining how to use the api.
 
 Finally,
 
@@ -66,9 +66,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Todo
-- fix bug (probably related to next js) where updates from queries never shop up on the page (production build)
-- fix react-query issue: new coins do not show up until refresh --> gebruik invalidate query
-- db & api opnieuw maken met primary key & params
+- take care of /archive page
+- take care of sorting in table
 - fix form input error msg CSS
 - provide CryptoGecko attribution ("powered by CryptoGecko")
 
@@ -82,6 +81,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - show whether CoinGecko API is online or not
 
 ## Done
+- fix bug (probably related to next js) where updates from queries never shop up on the page (production build)
+- fix react-query issue: new coins do not show up until refresh --> use invalidate query
+- db & api opnieuw maken met primary key & params
 - extract helper function from WeekCharts component -> moved to function that queries coinGecko
 - fix time delta calculation: go back exactly one week instead of "24 * 7" hours -> not used anymore
 - add garbage icon in frontend

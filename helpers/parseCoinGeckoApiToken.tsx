@@ -12,7 +12,7 @@ const prepareChartData = (data: number[]): ChartDataPoint[] => {
   }));
 };
 
-const parseCoinGeckoApiToken = (apiToken: CoinGeckoApiToken): Token => {
+const parseCoinGeckoApiToken = (apiToken: CoinGeckoApiToken, ownApiTokenId: number): Token => {
   let trendHourly =
     Math.round(apiToken.price_change_percentage_1h_in_currency * 10) / 10;
   let trendDaily =
@@ -21,6 +21,7 @@ const parseCoinGeckoApiToken = (apiToken: CoinGeckoApiToken): Token => {
     Math.round(apiToken.price_change_percentage_7d_in_currency * 10) / 10;
 
   return {
+    apiId: ownApiTokenId,
     id: apiToken.id, // e.g. bitcoin, ethereum etc
     marketCapRank: apiToken.market_cap_rank,
     symbol: apiToken.symbol, // e.g. btc, eth etc

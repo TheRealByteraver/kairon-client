@@ -1,7 +1,7 @@
+import { useCallback, useEffect, useState } from "react";
+
 import TokenForm from "@/Components/TokenForm";
 import Header from "@/Components/Header";
-
-import { useEffect, useState } from "react";
 
 import useTokens from "@/hooks/useTokens";
 import useAddToken from "@/hooks/useAddToken";
@@ -11,27 +11,23 @@ import parseCoinGeckoApiToken from "@/helpers/parseCoinGeckoApiToken";
 import OverviewTable from "@/Components/OverviewTable";
 
 const HomePage: React.FC<{}> = ({}) => {
-  // const [data, setData] = useState<CoinGeckoApiToken[]>([]);
-  const [data, setData] = useState</*CoinGeckoApi*/ Token[]>([]);
+  const [data, setData] = useState<Token[]>([]);
   const { data: tokens = [], error } = useTokens();
-  const { mutate: updateTokenMutate } = useUpateToken();
+  const { mutate: updateTokenMutate } = useUpateToken(); // to archive (remove) token
   const { mutate: addTokenMutate } = useAddToken();
 
   useEffect(() => {
     if (tokens.length) {
-      // const tokensString = tokens.map((token) => token.name).join();
-      // fetch(
-      //   `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokensString}&sparkline=true&price_change_percentage=1h,24h,7d&precision=2`
-      // )
-      //   .then((data) => data.json())
-      //   .then((data) => setData(data));
-
+      // We need to bind the id of our own api (a number) to the object containing the token data
+      // that we get back from CoinGecko, so we now which id we need to give as parameter to the 
+      // mutate function that deletes/ archives a token when the user clicks on the little bin.
       const tokenStrings = tokens.map((token) => token.name);
       readCoinsMarkets(tokenStrings as string[]).then((coinGeckoApiTokens) => {
         setData(
-          coinGeckoApiTokens.map((coinGeckoApiToken) =>
-            parseCoinGeckoApiToken(coinGeckoApiToken)
-          )
+          coinGeckoApiTokens.map(coinGeckoApiToken => {
+            const ownApiToken = tokens.filter(token => token.name === coinGeckoApiToken.id)[0];
+            return parseCoinGeckoApiToken(coinGeckoApiToken, ownApiToken.id as number);
+          })
         );
       });
     }
@@ -41,43 +37,16 @@ const HomePage: React.FC<{}> = ({}) => {
     addTokenMutate(tokenName);
   };
 
-  const archiveToken = (tokenName: string) => {
-    console.log('archiveToken() called! with param', tokenName);
-    console.log('tokens are:', tokens);
-    const tokenToArchive = tokens.filter(token => token.name === tokenName);
-    if (tokenToArchive.length === 1) {
-      const token = tokenToArchive[0];
-      console.log('found token to delete:', token);
-      const payload: OwnApiToken = { id: token.id, active: 0 };
-      updateTokenMutate(payload); 
-    }
-  };
+  const archiveToken = useCallback((tokenId: number) => {
+    updateTokenMutate({ id: tokenId, active: 0 }); 
+  }, [updateTokenMutate]);
 
   return (
     <main className="p-2">
       <Header />
       <TokenForm addToken={addToken} />
-
       <div className="mt-4">
         {data && <OverviewTable data={data} removeToken={archiveToken} />}
-
-
-        {/* {error !== undefined && error !== null && (
-          <div>An error occured retrieving the tokens from our api</div>
-        )}
-
-        {tokens && !("error" in tokens) && (
-          <ul>
-            {tokens.map((token) => (
-              <li key={token.id}>
-                <button onClick={() => archiveToken(token.id as number)}>
-                  XXX
-                </button>{" "}
-                {token.name}
-              </li>
-            ))}
-          </ul>
-        )} */}
       </div>
     </main>
   );
