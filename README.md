@@ -66,7 +66,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Todo
-- take care of /archive page
+- finish coin detail page
+- check production build
 - take care of sorting in table
 - fix form input error msg CSS
 - provide CryptoGecko attribution ("powered by CryptoGecko")
@@ -81,6 +82,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - show whether CoinGecko API is online or not
 
 ## Done
+- take care of /archive page
 - fix bug (probably related to next js) where updates from queries never shop up on the page (production build)
 - fix react-query issue: new coins do not show up until refresh --> use invalidate query
 - db & api opnieuw maken met primary key & params

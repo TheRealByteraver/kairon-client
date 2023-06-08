@@ -5,7 +5,6 @@ const TokenButtonList: React.FC<{ tokens: OwnApiToken[] }> = ({ tokens }) => {
   const { mutate: updateTokenMutate } = useUpateToken();
 
   const buttonClickHandler = (token: OwnApiToken) => {
-    console.log("now reactivating token: ", token);
     updateTokenMutate({ id: token.id, active: 1 });
   };
 

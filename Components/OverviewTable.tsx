@@ -14,6 +14,7 @@ const OverviewTable: React.FC<{
   data: Token[];
   removeToken: (tokenId: number) => void;
 }> = ({ data, removeToken }) => {
+  
   // Utility fn for creating column definitions
   const columnHelper = createColumnHelper<Token>();
 
@@ -72,14 +73,12 @@ const OverviewTable: React.FC<{
       columnHelper.accessor("symbol", {
         // we don't want to display the ticker as a separate column but we need
         // to include it here or we can't use it in the "name" column below.
-        // There should be a better way but this works right now.
-        // id: undefined,
+        // TMaybe there is a better way to do this...?
         header: undefined,
         cell: () => null,
       }),
       columnHelper.accessor("image", {
         // same remarks as for "symbol" above
-        // id: undefined,
         header: undefined,
         cell: () => null,
       }),
@@ -193,8 +192,6 @@ const OverviewTable: React.FC<{
   if (!data) {
     return <div>Loading...</div>;
   }
-
-  console.log('rendering table');
 
   return (
     <table className="w-[1280px] border-collapse font-bold leading-10 text-right">
