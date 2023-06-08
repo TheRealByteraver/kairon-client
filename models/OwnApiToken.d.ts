@@ -1,5 +1,5 @@
 interface OwnApiToken {
-  id?: number;
-  name?: string;
-  active?: number;
+  id: number;
+  name: string;
+  active: number;
 }

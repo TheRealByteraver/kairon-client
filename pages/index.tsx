@@ -20,7 +20,7 @@ const HomePage: React.FC<{}> = ({}) => {
     if (tokens.length) {
       // We need to bind the id of our own api (a number) to the object containing the token data
       // that we get back from CoinGecko, so we now which id we need to give as parameter to the 
-      // mutate function that deletes/ archives a token when the user clicks on the little bin.
+      // mutate function that deletes/ archives a token when the user clicks on the bin icon.
       const tokenStrings = tokens.map((token) => token.name);
       readCoinsMarkets(tokenStrings as string[]).then((coinGeckoApiTokens) => {
         setData(

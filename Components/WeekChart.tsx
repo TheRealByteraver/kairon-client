@@ -3,9 +3,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
 const WeekChart: React.FC<{
   data: { xAxisValue: number; yAxisValue: number }[];
 }> = ({ data }) => {
-  if (!data) {
-    return null;
-  }
+  if (!data) return null;
 
   return (
     <ResponsiveContainer width="100%" height="100%" debounce={1}>

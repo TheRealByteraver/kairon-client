@@ -3,7 +3,7 @@
 // returns: updated token object on success, throws error on error
 
 const updateToken = async (
-  token: OwnApiToken
+  token: Partial<OwnApiToken>
 ): Promise<OwnApiToken> => {
   return (
     fetch(`${process.env.NEXT_PUBLIC_TOKEN_API_URL}/tokens/${token.id}`, {

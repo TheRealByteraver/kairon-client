@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const useUpateToken = () => {
   const queryClient = useQueryClient();
-  return useMutation((payload: OwnApiToken) => updateToken(payload), {
+  return useMutation((ownApiToken: Partial<OwnApiToken>) => updateToken(ownApiToken), {
     onSuccess: (data, variables) => {
       // updating a token from active to inactive or vice versa
       // makes both queries ["tokens"] and ["inactiveTokens"] stale

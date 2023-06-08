@@ -51,7 +51,7 @@ const TokenForm: React.FC<{ addToken: (token: string) => void }> = ({
         />
 
         {/* the .toString() is added to prevent a TS error */}
-        <p>{errors.token?.message?.toString()}</p>
+        <p className="text-red-500">{errors.token?.message?.toString()}</p>
       </div>
       <Button type="submit">ADD</Button>
     </form>

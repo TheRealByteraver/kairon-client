@@ -6,9 +6,8 @@ const readCoinsMarkets = async (
   // The return below is necessary because querying CoinGecko without
   // specifying any Token id will return a list of the first 100 tokens
   // (highest in value first, descending)
-  if (tokens.length === 0) {
-    return [];
-  }
+  if (tokens.length === 0) return [];
+
   return (
     fetch(
       `${COINGECKO_API_URL}/coins/markets?vs_currency=usd&ids=${tokens.join()}&sparkline=true&price_change_percentage=1h,24h,7d&precision=2`
