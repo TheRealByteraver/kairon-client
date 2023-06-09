@@ -4,7 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 
 const useTokens = () => {
   const getInactiveTokens = false;
-  return useQuery(["tokens"], () => readAllTokens(getInactiveTokens))
-}
+  return useQuery({
+    // refetchInterval: 2000,
+    queryKey: ["tokens"],
+    queryFn: () => readAllTokens(getInactiveTokens),
+  });
+};
 
 export default useTokens;

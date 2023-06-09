@@ -9,12 +9,17 @@ import useUpateToken from "@/hooks/useUpateToken";
 import readCoinsMarkets from "@/ApiQueries/CoinGeckoApi/readCoinsMarkets";
 import parseCoinGeckoApiToken from "@/helpers/parseCoinGeckoApiToken";
 import OverviewTable from "@/Components/OverviewTable";
+// import useCoinGeckoTokens from "@/hooks/useCoinGeckoTokens";
+// import useMutateCoinGeckoTokens from "@/hooks/useMutateCoinGeckoTokens";
 
 const HomePage: React.FC<{}> = ({}) => {
   const [data, setData] = useState<Token[]>([]);
   const { data: tokens = [], error } = useTokens();
   const { mutate: updateTokenMutate } = useUpateToken(); // to archive (remove) token
   const { mutate: addTokenMutate } = useAddToken();
+
+  // const { data: coinGeckoTokens = [], error: coinGeckoApiError } = useCoinGeckoTokens([]);
+  // const { mutate: coinGeckoTokenMutate } = useMutateCoinGeckoTokens(); 
 
   useEffect(() => {
     if (tokens.length) {

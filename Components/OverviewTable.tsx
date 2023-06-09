@@ -4,11 +4,13 @@ import {
   createColumnHelper,
   getCoreRowModel,
   flexRender,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
 import WeekChart from "@/Components/WeekChart";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import TrashCanIcon from "./UI/Icons/TrashCanIcon";
 import Link from "next/link";
 
@@ -93,13 +95,28 @@ const OverviewTable: React.FC<{
           </Link>
         ),
       }),
-      columnHelper.accessor("currentPrice", {
-        header: "Price",
+
+
+      columnHelper.accessor("currentPrice", {        
+        header: "Price",        
         cell: (props) => {
           const val: number = props.row.getValue("currentPrice");
           return <div>${val.toLocaleString("en-US")}</div>;
         },
       }),
+
+      // {
+      //   header: "price",
+      //   accessor: "currentPrice",
+      //   cell: (props: any) => {
+      //     const val: number = props.row.getValue("currentPrice");
+      //     if (val !== undefined) {
+      //       return <div>${val.toLocaleString("en-US")}</div>;
+      //     }
+      //     return <div>N/A</div>;
+      //   },
+      // },
+
       columnHelper.accessor("trendHourly", {
         header: "1h",
         cell: (props) => {
@@ -161,10 +178,17 @@ const OverviewTable: React.FC<{
     [columnHelper, removeToken]
   );
 
+  const [sorting, setSorting] = useState<SortingState>([])
+
   const reactTable = useReactTable({
     data: data,
     columns: defaultColumns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     // debugAll: true,
   });
 
@@ -173,35 +197,59 @@ const OverviewTable: React.FC<{
   }
 
   return (
-    <table className="w-[1280px] border-collapse font-bold leading-10 text-right">
-      <thead>
-        {reactTable.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id} className="border-t border-gray-400">
-            {headerGroup.headers.map((header) => (
-              <th key={header.id} className="">
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
+    <div>
+      <table className="w-[1280px] border-collapse font-bold leading-10 text-right">
+        <thead>
+          {reactTable.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id} className="border-t border-gray-400">
+              {headerGroup.headers.map((header) => {
+                return (
+                  <th key={header.id} className="">
+                    {header.isPlaceholder ? null : (
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? "cursor-pointer select-none"
+                            : "",
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
                     )}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {reactTable.getRowModel().rows.map((row) => (
-          <tr key={row.id} className="border-t border-gray-400">
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {reactTable.getRowModel().rows.map((row) => {
+            return (
+              <tr key={row.id} className="border-t border-gray-400">
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

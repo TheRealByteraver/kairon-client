@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Purpose
+This application shows the current state of affairs of a list of tokens (cryptocurrency coins): how much they are worth, their price variation over the past week, past day and past hour. Clicking on any token reveals some details about the particular token. The information is taken from the coinGecko API.
+The user can customize the token list by adding/removing tokens. The application keeps track of this list in a sqlite database through an API written in Python (see below).
+Finally, the app keeps track of removed tokens on the /archive page. Removed tokens can be reactivated here.
+
 ## Instructions
 
 ### Install the client
@@ -66,36 +71,26 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Todo
-- finish coin detail page
-- check production build
 - take care of sorting in table
-- fix form input error msg CSS
-- provide CryptoGecko attribution ("powered by CryptoGecko")
+- take care of auto refetch for coin gecko db
+- provide CryptoGecko attribution ("powered by CoinGecko")
 
 ## Issues
 - find out why Vercel throws css away on publish
-- fix react query refetch interval thing
+- better react query refetch interval thing
 - fix "hidden" columns => check react-table docs (https://tanstack.com/table/v8/docs/api/core/table)
 
 ## Ideas
 - connect kairon.erland.info to frontend on Vercel: https://kairon-client.vercel.app/ ? https ?
 - show whether CoinGecko API is online or not
 
-## Done
-- take care of /archive page
-- fix bug (probably related to next js) where updates from queries never shop up on the page (production build)
-- fix react-query issue: new coins do not show up until refresh --> use invalidate query
-- db & api opnieuw maken met primary key & params
-- extract helper function from WeekCharts component -> moved to function that queries coinGecko
-- fix time delta calculation: go back exactly one week instead of "24 * 7" hours -> not used anymore
-- add garbage icon in frontend
-- add comma's to display of large numbers in table
-- add market cap value to token object
-- test what happens if CoinGecko APi gets request for non existent token => unknown tokens are silently ignored
-
 ## useful resources:
+
+### frontend:
 - https://tanstack.com/query/v4/docs/react/guides/query-functions
 - https://medium.com/doctolib/react-query-cachetime-vs-staletime-ec74defc483e
 - https://www.youtube.com/watch?v=Nm0inP3B_zs&list=PLC3y8-rFHvwjTELCrPrcZlo6blLBUspd2&index=2&ab_channel=Codevolution
 
+### backend:
+- https://www.youtube.com/watch?v=PTZiDnuC86g&ab_channel=TraversyMedia
 
