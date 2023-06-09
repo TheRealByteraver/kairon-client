@@ -71,23 +71,24 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Todo
-- take care of sorting in table
-- take care of auto refetch for coin gecko db
+- take care of proper sorting in table
+- take care of auto refetch for coin gecko api (convert to useQuery?)
 - provide CryptoGecko attribution ("powered by CoinGecko")
 
-## Issues
-- find out why Vercel throws css away on publish
-- better react query refetch interval thing
-- fix "hidden" columns => check react-table docs (https://tanstack.com/table/v8/docs/api/core/table)
+## Improvements
+- on landing page: fetch coinGecko's /coins/list to get a list of known tokens, and use this to help the use add tokens with the form, by using autocomplete for example, and prevent addition of non-existent tokens
+- improve error handling of fetch() calls, provide user feedback with modal on fetch error etc
+- /:tokenName page: more details (fetch different api endpoint), show graph, fancier css
+- /archive page: improve design/ looks, add "permanent token delete" functionality
 
 ## Ideas
-- connect kairon.erland.info to frontend on Vercel: https://kairon-client.vercel.app/ ? https ?
-- show whether CoinGecko API is online or not
+- show online status of CoinGecko API on landing page
 
 ## useful resources:
 
 ### frontend:
 - https://tanstack.com/query/v4/docs/react/guides/query-functions
+- https://tkdodo.eu/blog/breaking-react-querys-api-on-purpose
 - https://medium.com/doctolib/react-query-cachetime-vs-staletime-ec74defc483e
 - https://www.youtube.com/watch?v=Nm0inP3B_zs&list=PLC3y8-rFHvwjTELCrPrcZlo6blLBUspd2&index=2&ab_channel=Codevolution
 
