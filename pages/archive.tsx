@@ -1,5 +1,5 @@
-import Header from "@/Components/Header";
-import TokenButtonList from "@/Components/TokenButtonList";
+import Header from "@/components/Header";
+import TokenButtonList from "@/components/TokenButtonList";
 import useInactiveTokens from "@/hooks/useInactiveTokens";
 
 const ArchivePage: React.FC<{}> = ({}) => {

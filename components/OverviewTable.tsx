@@ -9,7 +9,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import WeekChart from "@/Components/WeekChart";
+import WeekChart from "@/components/WeekChart";
 import { useMemo, useState } from "react";
 import TrashCanIcon from "./UI/Icons/TrashCanIcon";
 import Link from "next/link";

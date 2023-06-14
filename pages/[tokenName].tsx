@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import Header from "@/Components/Header";
+import Header from "@/components/Header";
 import readCoinsMarkets from "@/ApiQueries/CoinGeckoApi/readCoinsMarkets";
-import TokenDetails from "@/Components/TokenDetails";
+import TokenDetails from "@/components/TokenDetails";
 
 const TokenDetailPage: React.FC<{}> = ({}) => {
   const router = useRouter();

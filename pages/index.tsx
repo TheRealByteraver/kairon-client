@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 
-import TokenForm from "@/Components/TokenForm";
-import Header from "@/Components/Header";
+import TokenForm from "@/components/TokenForm";
+import Header from "@/components/Header";
 import useTokens from "@/hooks/useTokens";
 import useAddToken from "@/hooks/useAddToken";
 import useUpateToken from "@/hooks/useUpateToken";
 import parseCoinGeckoApiToken from "@/helpers/parseCoinGeckoApiToken";
-import OverviewTable from "@/Components/OverviewTable";
+import OverviewTable from "@/components/OverviewTable";
 import useCoinGeckoTokens from "@/hooks/useCoinGeckoTokens";
 import { useQueryClient } from "@tanstack/react-query";
 

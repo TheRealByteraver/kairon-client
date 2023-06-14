@@ -1,4 +1,4 @@
-import Button from "@/Components/UI/Button";
+import Button from "@/components/UI/Button";
 import useUpateToken from "@/hooks/useUpateToken";
 
 const TokenButtonList: React.FC<{ tokens: OwnApiToken[] }> = ({ tokens }) => {

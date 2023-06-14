@@ -12,6 +12,9 @@
 /.next/
 /out/
 
+# debugging test folder
+/htmlCssTest
+
 # production
 /build
 
